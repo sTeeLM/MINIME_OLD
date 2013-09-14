@@ -155,6 +155,7 @@ find /var/log -type f -exec /bin/cp /dev/null {} \;
 rm -rf /var/cache/fontconfig/*
 rm -rf /run/*
 rm -rf /var/lib/gdm
+rm -rf /var/spool/mail/*
 mkdir -p /var/lib/gdm
 chown -R gdm.gdm /var/lib/gdm
 chmod o+t /var/lib/gdm

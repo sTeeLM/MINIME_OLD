@@ -45,11 +45,13 @@ done
 swaps=`blkid -t TYPE=swap -o device`
 if ! strstr "`cat /proc/cmdline`" noswap && [ -n "$swaps" ] ; then
   for s in $swaps ; do
-    action "Enabling swap partition $s" swapon $s
+    my_ply_client show-message "Enabling swap partition $s" 
+    swapon $s
   done
 fi
 if ! strstr "`cat /proc/cmdline`" noswap && [ -f /run/initramfs/live/${livedir}/swap.img ] ; then
-  action "Enabling swap file" swapon /run/initramfs/live/${livedir}/swap.img
+  my_ply_client show-message "Enabling swap file" 
+  swapon /run/initramfs/live/${livedir}/swap.img
 fi
 
 askPassword() {
@@ -60,18 +62,56 @@ askPassword() {
        if [ -n "$_pass" ]; then
             echo -n $_pass
             break
+       elif my_ply_client ping ; then
+            my_ply_client show-message "Please give me password"
+       else
+            break
        fi
     done
 }
 
-askQuestion() {
+askYesNo() {
     local _prompt=$1
     local _ans
     while [ true ]; do
        _ans=$(my_ply_client question "$_prompt")
        if [ -n "$_ans" ]; then
-            echo -n $_ans
+           if [ "$_ans" != 'yes' -a "$_ans" != 'no' ]; then
+               my_ply_client show-message "Please answer yes/no"
+           else
+               echo -n $_ans
+               break
+           fi
+       elif my_ply_client ping ; then
+            my_ply_client show-message "Please give me some answer"
+       else
             break
+       fi
+    done
+}
+
+askSize() {
+    local _prompt=$1
+    local _min=$2
+    local _max=$3
+    local _ans
+    while [ true ]; do
+       _ans=$(my_ply_client question "$_prompt")
+       if [ -n "$_ans" ] ; then
+           if ! `echo -n "$_ans" | grep -q '[^0-9]'` ; then
+               if [ "$_ans" -ge $_min -a "$_ans" -le $_max ]; then
+                   echo -n $_ans
+                   break
+               else
+                   my_ply_client show-message "Size $_ans too small or too large"
+               fi
+           else
+               my_ply_client show-message "Invalid input $_ans"
+           fi
+       elif my_ply_client ping ; then
+           my_ply_client show-message "Please give me some input"
+       else
+           break
        fi
     done
 }
@@ -90,7 +130,8 @@ mountPersistentHome() {
   elif [ ! -b "$homedev" ]; then
     loopdev=`losetup -f`
     if [ "${homedev##/run/initramfs/live}" != "${homedev}" ]; then
-      action "Remounting live store r/w" mount -o remount,rw /run/initramfs/live
+      my_ply_client show-message "Remounting live store r/w" 
+      mount -o remount,rw /run/initramfs/live
     fi
     losetup $loopdev $homedev
     homedev=$loopdev
@@ -127,6 +168,7 @@ makePersistentHomeImage() {
    local _size , _pass
    _size=$1
    _pass=$2
+   my_ply_client show-message "Making home image, please be patient..." 
    mount -o rw,remount /run/initramfs/live
    dd if=/dev/zero of=/run/initramfs/live/${livedir}/home.img bs=4096 count=$(($_size *1024*1024/4096))
    echo -n $_pass | cryptsetup -v -y -c aes-cbc-plain --force-password luksFormat /run/initramfs/live/${livedir}/home.img
@@ -134,17 +176,20 @@ makePersistentHomeImage() {
    mkfs.ext4 /dev/mapper/EncHome
    cryptsetup luksClose EncHome
    mount -o ro,remount /run/initramfs/live
+   my_ply_client show-message "Home image Ready!!"
 }
 
 makePersistentHome() {
    local _yesno
    local _pass
    local _size
-   _yesno=$(askQuestion 'save persistent home?[yes/no]')
-   if [ $_yesno = 'yes' ]; then
-        _size=$(askQuestion 'persistent home size in MB?')
-        _pass=$(askPassword 'password for persistent home?')
-        makePersistentHomeImage "$_size" "$_pass"
+   _yesno=$(askYesNo 'Save home?[yes/no]')
+   if [ -n "$_yesno" -a "$_yesno" = 'yes' ]; then
+        _size=$(askSize 'Home size in MB(10-1000)?' 10 1000)
+        _pass=$(askPassword 'Password of home?')
+        if [ -n "$_pass" -a -n "$_size" ] ; then
+            makePersistentHomeImage "$_size" "$_pass"
+        fi
    fi
    if [ -e /run/initramfs/live/${livedir}/home.img ]; then
      homedev=/run/initramfs/live/${livedir}/home.img
@@ -156,12 +201,14 @@ if strstr "`cat /proc/cmdline`" persistenthome= ; then
 elif [ -e /run/initramfs/live/${livedir}/home.img ]; then
   homedev=/run/initramfs/live/${livedir}/home.img
 elif ! strstr "`cat /proc/cmdline`" nopersistenthome ; then
-  action "Initialize persistent /home " makePersistentHome
+  my_ply_client show-message "Initialize persistent /home " 
+  makePersistentHome
 fi
 
 # if we have a persistent /home, then we want to go ahead and mount it
 if ! strstr "`cat /proc/cmdline`" nopersistenthome && [ -n "$homedev" ] ; then
-  action "Mounting persistent /home" mountPersistentHome
+  my_ply_client show-message "Mounting persistent /home" 
+  mountPersistentHome
 fi
 
 # make it so that we don't do writing to the overlay for things which
@@ -178,7 +225,8 @@ fi
 gsettings set org.gnome.settings-daemon.plugins.updates active 'false' || :
 
 # add fedora user with no passwd
-action "Adding live user" useradd $USERADDARGS -c "Live System User" liveuser
+my_ply_client show-message "Adding live user" 
+useradd $USERADDARGS -c "Live System User" liveuser
 passwd -d liveuser > /dev/null || :
 usermod -aG wheel liveuser > /dev/null || :
 
