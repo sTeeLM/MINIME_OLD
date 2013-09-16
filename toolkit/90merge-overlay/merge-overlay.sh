@@ -129,6 +129,7 @@ clearRootImage()
             cat >> /mnt/tempfs/clearroot.sh << FOE
 #!/bin/sh
 mount -t proc proc /proc
+/sbin/load_policy -i
 yum clean all
 yum clean all
 rpm --rebuilddb
@@ -147,7 +148,6 @@ cp /etc/skel/.bashrc /root
 cp /etc/skel/.bash_profile /root
 passwd -d root
 passwd -l root
-umount /proc
 rm -rf /tmp/*
 rm -rf /var/tmp/*
 rm -rf /var/log/journal/*
@@ -161,9 +161,20 @@ chown -R gdm.gdm /var/lib/gdm
 chmod o+t /var/lib/gdm
 chmod ug+rwx /var/lib/gdm
 chmod o-rwx /var/lib/gdm
+restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
+/sbin/restorecon -v /etc/passwd /etc/passwd-
+/sbin/restorecon -v /etc/group /etc/group-
+/sbin/restorecon -v /etc/shadow /etc/shadow-
+/sbin/restorecon -Rv /root
+/sbin/restorecon -Rv /var/lib
+/sbin/restorecon -Rv /var/log
+umount /proc
 FOE
+            mount -o bind /sys /mnt/tempfs/sys
             chroot /mnt/tempfs/ sh -x clearroot.sh
+            umount /mnt/tempfs/sys/fs/selinux
+            umount /mnt/tempfs/sys/
             rm -rf /mnt/tempfs/clearroot.sh
             echo "Cleaning empty space, this will take long time, please be patient"
             dd if=/dev/zero of=/mnt/tempfs/big-empty-file
@@ -225,7 +236,7 @@ clearRootImage $temp_root_dir/fsimg/LiveOS/ext3fs.img &&
 echo "Done"
 
 echo "Making new squash fs as $temp_root_dir/squashfs.img"
-mksquashfs "$temp_root_dir/fsimg/" "$temp_root_dir/squashfs.img" -comp xz -Xbcj x86 &&
+mksquashfs "$temp_root_dir/fsimg/" "$temp_root_dir/squashfs.img" -b 524288 -comp xz -Xbcj x86 &&
 echo "Done"
 
 if [ ! -f "$temp_root_dir/squashfs.img" ]; then
