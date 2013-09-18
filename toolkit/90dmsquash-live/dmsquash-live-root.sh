@@ -30,7 +30,7 @@ overlay_size=$(getarg rd.live.overlay.size -d overlay_size)
 
 if [ -z "$overlay_size" ]; then
     overlay_size=512
-    warn "make default overlay size $overlay_size MB"
+    warn "set default overlay size $overlay_size MB"
 fi
 
 # CD/DVD media check
