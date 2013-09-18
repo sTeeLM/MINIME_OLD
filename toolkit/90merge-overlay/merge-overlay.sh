@@ -110,6 +110,32 @@ makeTempRoot()
     fi
 }
 
+makeOSMin()
+{
+    local _fs=$1
+    local _osmin=$2
+    local _temp=$3
+    local _fs_loop=$(losetup -f)
+    local _osmin_loop=$(losetup -f)
+
+    if [ -z "$_fs_loop" -o -z "$_osmin_loop" ]; then
+        echo "not enough loop device!"
+        return 1;
+    else
+        mkdir -p "$_temp/osmin.dir" &&
+        dd if=/dev/null of="$_temp/osmin.dir/osmin" bs=1024 count=1 seek=$((1024 * 1024)) 2> /dev/null &&
+        losetup $_fs_loop "$_fs" &&
+        losetup $_osmin_loop "$_temp/osmin.dir/osmin" &&
+        (echo "0 $( blockdev --getsz $_fs_loop ) snapshot $_fs_loop $_osmin_loop p 8" | dmsetup create live-osimg-min-temp) &&
+        e2label /dev/mapper/live-osimg-min-temp MINIME_LIVE &&
+        dmsetup remove live-osimg-min-temp &&
+        losetup -d $_fs_loop &&
+        losetup -d $_osmin_loop &&
+        mksquashfs "$_temp/osmin.dir" "$_osmin" -comp xz &&
+        return 0
+    fi
+}
+
 closeTempRoot()
 {
     local _temp_device=$1
@@ -163,6 +189,9 @@ chmod ug+rwx /var/lib/gdm
 chmod o-rwx /var/lib/gdm
 restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
+sed -i 's/AutomaticLoginEnable=True/AutomaticLoginEnable=False/' /etc/gdm/custom.conf
+sed -i 's/AutomaticLogin=liveuser//' /etc/gdm/custom.conf
+rm -rf /var/lib/AccountsService/users/liveuser
 /sbin/restorecon -v /etc/passwd /etc/passwd-
 /sbin/restorecon -v /etc/group /etc/group-
 /sbin/restorecon -v /etc/shadow /etc/shadow-
@@ -244,23 +273,32 @@ if [ ! -f "$temp_root_dir/squashfs.img" ]; then
     exit 1
 fi
 
-echo "Backing up old squash img as $temp_root_dir/backup/squashfs.img"
-mkdir -p "$temp_root_dir/backup" &&
-pv -tpreb -i 2 $live_root_dir/LiveOS/squashfs.img | dd of="$temp_root_dir/backup/squashfs.img" &&
-rm -f $live_root_dir/LiveOS/squashfs.img &&
+echo "Making new osmin as $temp_root_dir/osmin.img"
+makeOSMin "$temp_root_dir/fsimg/LiveOS/ext3fs.img" "$temp_root_dir/osmin.img" "$temp_root_dir/fsimg" &&
 echo "Done"
 
-if [ -f "$live_root_dir/LiveOS/squashfs.img" ]; then
-    "Back up fail, quit!"
-    exit 1
-fi
+
+echo "Backing up old img as $temp_root_dir/backup/squashfs.img and $temp_root_dir/backup/osmin.img"
+mkdir -p "$temp_root_dir/backup" &&
+echo "squashfs.img" &&
+pv -tpreb -i 2 $live_root_dir/LiveOS/squashfs.img | dd of="$temp_root_dir/backup/squashfs.img" &&
+echo "osmin.img" &&
+pv -tpreb -i 2 $live_root_dir/LiveOS/osmin.img | dd of="$temp_root_dir/backup/osmin.img" &&
+rm -f $live_root_dir/LiveOS/squashfs.img &&
+rm -f $live_root_dir/LiveOS/osmin.img &&
+echo "Done"
 
 
-echo "Copying new squash img as $live_root_dir/LiveOS/squashfs.img"
+echo "Copying new img as $live_root_dir/LiveOS/squashfs.img and $live_root_dir/LiveOS/osmin.img"
+echo "squashfs.img" &&
 pv -tpreb -i 2 "$temp_root_dir/squashfs.img" | dd of=$live_root_dir/LiveOS/squashfs.img &&
+echo "osmin.img" &&
+pv -tpreb -i 2 "$temp_root_dir/osmin.img" | dd of=$live_root_dir/LiveOS/osmin.img &&
 rm -rf "$temp_root_dir/squashfs.img" &&
+rm -rf "$temp_root_dir/osmin.img" &&
 rm -rf "$temp_root_dir/fsimg" &&
 echo "Done"
+
 
 closeTempRoot $select_device
 
@@ -268,6 +306,7 @@ pushd .
 echo "Creating MD5 sum"
 cd $live_root_dir/LiveOS/ && 
 md5sum -b squashfs.img > squashfs.img.md5 &&
+md5sum -b osmin.img > osmin.img.md5 &&
 echo "Done"
 popd
 

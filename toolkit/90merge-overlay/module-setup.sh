@@ -19,6 +19,7 @@ installkernel() {
 }
 
 install() {
+    dracut_install sync pv e2label df date mksquashfs pv sync
     inst_script "$moddir/merge-overlay.sh" "/bin/merge-overlay"
     inst_hook pre-mount 08 "$moddir/merge-overlay-hook.sh"
     inst_dir /mnt 
