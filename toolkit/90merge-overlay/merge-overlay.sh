@@ -165,10 +165,10 @@ chmod o-rwx /var/lib/gdm
 restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
 BuildVersion="MINIME build at $(date +'%Y-%m-%d %H:%m:%S')"
-echo $BuildVersion > /etc/motd
+echo \$BuildVersion > /etc/motd
 sed -i 's/AutomaticLoginEnable=True/AutomaticLoginEnable=False/' /etc/gdm/custom.conf
 sed -i 's/AutomaticLogin=liveuser//' /etc/gdm/custom.conf
-sed -i "s/BuildVersion=.*/BuildVersion=$BuildVersion/" /usr/share/plymouth/themes/minime/minime.plymouth
+sed -i "s/BuildVersion=.*/BuildVersion=\$BuildVersion/" /usr/share/plymouth/themes/minime/minime.plymouth
 rm -rf /var/lib/AccountsService/users/liveuser
 /sbin/restorecon -v /etc/passwd /etc/passwd-
 /sbin/restorecon -v /etc/group /etc/group-
