@@ -30,28 +30,7 @@ overlay_size=$(getarg rd.live.overlay.size -d overlay_size)
 
 if [ -z "$overlay_size" ]; then
     overlay_size=512
-    warn "set default overlay size $overlay_size MB"
-fi
-
-# CD/DVD media check
-[ -b $livedev ] && fs=$(blkid -s TYPE -o value $livedev)
-if [ "$fs" = "iso9660" -o "$fs" = "udf" ]; then
-    check="yes"
-fi
-getarg rd.live.check -d check || check=""
-if [ -n "$check" ]; then
-    type plymouth >/dev/null 2>&1 && plymouth --hide-splash
-    if [ -n "$DRACUT_SYSTEMD" ]; then
-        p=$(str_replace "$livedev" "-" '\x2d')
-        systemctl start checkisomd5@${p}.service
-    else
-        checkisomd5 --verbose $livedev
-    fi
-    if [ $? -ne 0 ]; then
-        die "CD check failed!"
-        exit 1
-    fi
-    type plymouth >/dev/null 2>&1 && plymouth --show-splash
+    warn "make default overlay size $overlay_size MB"
 fi
 
 ln -s $livedev /run/initramfs/livedev
@@ -63,6 +42,8 @@ det_img_fs() {
 }
 
 modprobe squashfs
+check="yes"
+getarg rd.live.check -d check || check=""
 
 for arg in $CMDLINE; do case $arg in ro|rw) liverw=$arg ;; esac; done
 # mount the backing of the live image first
@@ -83,6 +64,21 @@ else
         die "Failed to mount block device of live image"
         exit 1
     fi
+fi
+
+if [ -n "$check" ]; then
+    warn "Checking image file..."
+    type plymouth >/dev/null 2>&1 && plymouth --hide-splash
+    pushd .
+    cd /run/initramfs/live/LiveOS/
+    md5sum -c ${squash_image}.md5
+    if [ $? -ne 0 ]; then
+        die "$squash_image check failed!"
+        exit 1
+    fi
+    popd
+    warn "Checking image file... DONE!"
+    type plymouth >/dev/null 2>&1 && plymouth --show-splash
 fi
 
 # overlay setup helper function
@@ -164,22 +160,10 @@ do_live_from_base_loop() {
     do_live_overlay
 }
 
-# we might have a genMinInstDelta delta file for anaconda to take advantage of
-if [ -e /run/initramfs/live/${live_dir}/osmin.img ]; then
-    OSMINSQFS=/run/initramfs/live/${live_dir}/osmin.img
-fi
 
-if [ -n "$OSMINSQFS" ]; then
-    # decompress the delta data
-    dd if=$OSMINSQFS of=/osmin.img 2> /dev/null
-    OSMIN_SQUASHED_LOOPDEV=$( losetup -f )
-    losetup -r $OSMIN_SQUASHED_LOOPDEV /osmin.img
-    mkdir -m 0755 -p /run/initramfs/squashfs.osmin
-    mount -n -t squashfs -o ro $OSMIN_SQUASHED_LOOPDEV /run/initramfs/squashfs.osmin
-    OSMIN_LOOPDEV=$( losetup -f )
-    losetup -r $OSMIN_LOOPDEV /run/initramfs/squashfs.osmin/osmin
-    umount -l /run/initramfs/squashfs.osmin
-fi
+dd if=/dev/null of=/osmin bs=1024 count=1 seek=$((512*1024)) 2> /dev/null
+OSMIN_LOOPDEV=$( losetup -f )
+losetup $OSMIN_LOOPDEV /osmin
 
 # we might have an embedded fs image to use as rootfs (uncompressed live)
 if [ -e /run/initramfs/live/${live_dir}/ext3fs.img ]; then
@@ -230,6 +214,9 @@ fi
 if [ -b "$OSMIN_LOOPDEV" ]; then
     # set up the devicemapper snapshot device, which will merge
     # the normal live fs image, and the delta, into a minimzied fs image
+    echo "0 $( blockdev --getsz $BASE_LOOPDEV ) snapshot $BASE_LOOPDEV $OSMIN_LOOPDEV p 8" | dmsetup create live-osimg-min
+    e2label /dev/mapper/live-osimg-min MINIME-LIVE
+    dmsetup remove --retry live-osimg-min
     echo "0 $( blockdev --getsz $BASE_LOOPDEV ) snapshot $BASE_LOOPDEV $OSMIN_LOOPDEV p 8" | dmsetup create --readonly live-osimg-min
 fi
 
