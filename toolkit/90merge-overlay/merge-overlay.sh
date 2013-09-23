@@ -154,6 +154,8 @@ rm -rf /var/tmp/*
 rm -rf /var/log/journal/*
 find /var/log -type f -exec /bin/cp /dev/null {} \;
 rm -rf /var/cache/fontconfig/*
+rm -rf /var/cache/yum/*
+rm -rf /var/cache/man/*
 rm -rf /run/*
 rm -rf /var/lib/gdm
 rm -rf /var/spool/mail/*
