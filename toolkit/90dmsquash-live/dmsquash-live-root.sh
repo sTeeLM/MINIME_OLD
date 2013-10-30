@@ -216,6 +216,9 @@ if [ -b "$OSMIN_LOOPDEV" ]; then
     # the normal live fs image, and the delta, into a minimzied fs image
     echo "0 $( blockdev --getsz $BASE_LOOPDEV ) snapshot $BASE_LOOPDEV $OSMIN_LOOPDEV p 8" | dmsetup create live-osimg-min
     e2label /dev/mapper/live-osimg-min MINIME-LIVE
+    sync
+    dmsetup remove --retry live-osimg-min
+    sync
     dmsetup remove --retry live-osimg-min
     echo "0 $( blockdev --getsz $BASE_LOOPDEV ) snapshot $BASE_LOOPDEV $OSMIN_LOOPDEV p 8" | dmsetup create --readonly live-osimg-min
 fi
