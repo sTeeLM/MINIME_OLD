@@ -213,7 +213,7 @@ fi
 
 # make it so that we don't do writing to the overlay for things which
 # are just tmpdirs/caches
-mount -t tmpfs -o mode=0755 varcacheyum /var/cache/yum
+# mount -t tmpfs -o mode=0755 varcacheyum /var/cache/yum
 mount -t tmpfs vartmp /var/tmp
 [ -x /sbin/restorecon ] && /sbin/restorecon /var/cache/yum /var/tmp >/dev/null 2>&1
 
@@ -305,11 +305,18 @@ Language=zh_CN.utf8
 XSession=kde-plasma
 SystemAccount=false
 EOF
-else
+elif [ "$livedesktop" == "gnome" ]; then
   cat > /var/lib/AccountsService/users/liveuser<<EOF
 [User]
 Language=zh_CN.utf8
 XSession=gnome
+SystemAccount=false
+EOF
+else
+  cat > /var/lib/AccountsService/users/liveuser<<EOF
+[User]
+Language=zh_CN.utf8
+XSession=cde
 SystemAccount=false
 EOF
 fi

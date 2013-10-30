@@ -166,11 +166,19 @@ chmod ug+rwx /var/lib/gdm
 chmod o-rwx /var/lib/gdm
 restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
-BuildVersion="MINIME build at $(date +'%Y-%m-%d %H:%m:%S')"
+. /etc/minime_version
+MINIME_MINOR=\$((\$MINIME_MINOR + 1))
+if [ \$MINIME_MINOR -le 100 ]; then
+    MINIME_MINOR=0
+    MINIME_MAJOR=\$((\$MINIME_MAJOR + 1))
+fi
+BuildVersion="MINIME \$MINIME_MAJOR.\$MINIME_MINOR build at \$(date +'%Y-%m-%d %H:%m:%S')"
 echo \$BuildVersion > /etc/motd
 sed -i 's/AutomaticLoginEnable=True/AutomaticLoginEnable=False/' /etc/gdm/custom.conf
 sed -i 's/AutomaticLogin=liveuser//' /etc/gdm/custom.conf
 sed -i "s/BuildVersion=.*/BuildVersion=\$BuildVersion/" /usr/share/plymouth/themes/minime/minime.plymouth
+echo MINIME_MAJOR=\$MINIME_MAJOR > /etc/minime_version
+echo MINIME_MINOR=\$MINIME_MINOR >> /etc/minime_version
 rm -rf /var/lib/AccountsService/users/liveuser
 /sbin/restorecon -v /etc/passwd /etc/passwd-
 /sbin/restorecon -v /etc/group /etc/group-
@@ -238,7 +246,7 @@ mkdir -p "$temp_root_dir/fsimg/LiveOS/" &&
 pv -tpreb -i 2 $ROOT_DEV | dd of="$temp_root_dir/fsimg/LiveOS/ext3fs.img" &&
 echo "Done"
 
-fsck -y "$temp_root_dir/fsimg/LiveOS/ext3fs.img"
+fsck.ext4 -y "$temp_root_dir/fsimg/LiveOS/ext3fs.img"
 
 echo "Clearing root image"
 clearRootImage $temp_root_dir/fsimg/LiveOS/ext3fs.img &&
