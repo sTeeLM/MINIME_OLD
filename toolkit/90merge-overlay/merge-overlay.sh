@@ -168,7 +168,7 @@ restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
 . /etc/minime_version
 MINIME_MINOR=\$((\$MINIME_MINOR + 1))
-if [ \$MINIME_MINOR -le 100 ]; then
+if [ \$MINIME_MINOR -ge 100 ]; then
     MINIME_MINOR=0
     MINIME_MAJOR=\$((\$MINIME_MAJOR + 1))
 fi
