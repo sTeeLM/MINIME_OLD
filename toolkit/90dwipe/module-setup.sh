@@ -19,6 +19,6 @@ installkernel() {
 }
 
 install() {
-    dracut_install dwipe
+    inst_multiple dwipe
     inst_hook pre-mount 09 "$moddir/dwipe.sh"
 }
