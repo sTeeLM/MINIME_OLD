@@ -19,6 +19,6 @@ installkernel() {
 }
 
 install() {
-    dracut_install ntfs-3g ntfs-3g.probe ntfs-3g.secaudit ntfs-3g.usermap lowntfs-3g ntfsmount mount.lowntfs-3g mount.ntfs-3g mount.ntfs-fuse
+    inst_multiple ntfs-3g ntfs-3g.probe ntfs-3g.secaudit ntfs-3g.usermap lowntfs-3g ntfsmount mount.lowntfs-3g mount.ntfs-3g mount.ntfs-fuse
     inst_script "$moddir/mount.ntfs.sh" "/sbin/mount.ntfs"
 }
