@@ -1,0 +1,35 @@
+<h3>
+<a name="update">升级</a>
+</h3>
+
+<p>
+升级<em>MINIME</em>系统，你需要：
+</p>
+
+<p>
+1. 备份U盘上的/isolinux/initrd0.img和/isolinux/vmlinuz0，并确保本地硬盘至少有40GB的空闲空间。
+</p>
+
+<p>
+2. 启动系统，打开<a href="#label_overlay">overlay</a>支持。overlay文件默认会放在U盘的/LiveOS/overlay-MINIME-xxxx-xxxx(x为16进制数字)， 你可以修改rd.live.overlay 选项，使用本地硬盘作为overlay空间，例如如果Window系统上一个分区叫DATA，可以将改选项设置为rd.live.overlay=LABEL=DATA，这样overay文件会放在DATA分区的/LiveOS/overlay-MINIME-xxxx-xxxx下。另外也可以修改rd.live.overlay.size选项为一个更大的数，以防止升级内容太多，占满overlay。
+</p>
+
+<p>
+3. 进行系统升级(yum update)，如果内核升级了，需要在升级之后，运行 "dracut -c /etc/minime.conf --xz new.img [新内核版本]" 生成新initrd，然后用新initrd，也就是new.img 覆盖/run/initramfs/live/isolinux/initrd0.img（覆盖U盘上同名文件），用新内核（/boot/vmlinuz-内核版本）覆盖/run/initramfs/live/isolinux/vmlinuz0。
+</p>
+
+<p>
+4. 重起系统，打开overlay选项，并且添加rd.live.overlay.merge启动参数，会出现一个界面让你选一个本地硬盘分区作为临时空间，如果本地硬盘空闲空间小于40G可能会失败。这个步骤会备份原有squashfs.img，合并squashfs.img和overlay，并替换原有squashfs.img，时间比较长，请耐心等待。
+</p>
+
+<p>
+5. 重起系统，关闭overlay支持，运行"dracut -c /etc/minime.conf --xz new.img"，用new.img覆盖/run/initramfs/live/isolinux/initrd0.img（是的，如果内核被升级，需要运行dracut两次），这个步骤将更新版本号和升级时间（也就是显示在启动屏幕上的那行"MINIME x.x build at xxx"）。
+</p>
+
+<p>
+6. 如果一切都OK，可以删除备份的vmlinuz0和initrd0.img，以及squashfs.img（这个文件在步骤4中被自动备份到本地硬盘），overlay文件也可以被删除。
+</p>
+
+<p>
+7. 如果出错，用备份的vmlinuz0和initrd0.img，以及squashfs.img替换U盘上同名文件即可。
+</p>

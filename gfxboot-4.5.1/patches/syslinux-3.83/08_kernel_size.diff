@@ -1,0 +1,36 @@
+diff --git a/core/comboot.inc b/core/comboot.inc
+index f39bfb1..0874526 100644
+--- a/core/comboot.inc
++++ b/core/comboot.inc
+@@ -1088,6 +1088,7 @@ comboot_hook_entry:
+ 		push fs
+ 		push es
+ 		push ds
++		mov ecx,[KernelSize]
+ 		call far [comboot_far]
+ 		pop ds
+ 		pop es
+diff --git a/core/ui.inc b/core/ui.inc
+index e37f2a7..6137dc9 100644
+--- a/core/ui.inc
++++ b/core/ui.inc
+@@ -616,7 +616,11 @@ kernel_good:
+ 		mov [KernelCNameLen],di
+ 
+ 		; Default memory limit, can be overridden by image loaders
++		mov eax,[AltHighMemSize]
++		or eax,eax
++		jnz .altsize
+ 		mov eax,[HighMemRsvd]
++.altsize:
+ 		mov [MyHighMemSize],eax
+ 
+ 		popad
+@@ -637,6 +641,7 @@ kernel_good:
+ ; At this point, EAX contains the size of the kernel, SI contains
+ ; the file handle/cluster pointer, and ECX contains the extension (if any.)
+ ;
++		mov [KernelSize],eax
+ 		movzx di,byte [KernelType]
+ 		add di,di
+ 		jmp [kerneltype_table+di]

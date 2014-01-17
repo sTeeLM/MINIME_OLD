@@ -1,0 +1,23 @@
+<h3>
+<a name="label_overlay">MINIME系统(CDE使用Overlay)</a>
+</h3>
+
+<p>
+这个选项添加'rd.live.overlay=LABEL=MINIME'到内核启动选项以支持持久化overlay。通过这个选项，对系统做的任何修改都被保存并持久化下来，后继可以使用'rd.live.overlay.merge'来把这些修改合并到squashfs.img中。一般当你想要升级系统镜像的时候使用这个选项，想要知道如何升级系统，清阅读<a href="#update">升级系统</a>。
+</p>
+
+<p>
+选项说明:
+</p>
+<p>
+1. rd.live.overlay=[devspec]:[filespec] : 指定overlay文件的位置，例如: rd.live.overlay=LABEL=SYSTEM:/overlay.img，其中'SYSTEM'是硬盘标签，'/overlay.img'是文件名。
+</p>
+<p>
+2. rd.live.overlay.reset : 清除overlay中所有的内容。
+</p>
+<p>
+3. rd.live.overlay.size : 设置overlay大小(MB)，默认是512。
+</p>
+<p>
+4. rd.live.overlay.merge : 启动一个小界面，合并overlay到squashfs.img中。
+</p>

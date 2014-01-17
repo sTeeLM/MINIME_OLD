@@ -1,0 +1,22 @@
+label_gnome
+MINIME系统(GNOME)
+label_kde
+MINIME系统(KDE)
+label_cde
+MINIME系统(CDE)
+label_nohome
+MINIME系统(CDE不使用Home.img)
+label_overlay
+MINIME系统(CDE使用Overlay)
+label_nuke_manual
+硬盘毁灭工具(手动模式)
+label_nuke_auto
+硬盘毁灭工具(自动模式)
+label_dos
+DOS 启动盘
+label_hdt
+硬件检测工具
+label_memtest
+内存检测
+label_harddisk
+启动本地硬盘

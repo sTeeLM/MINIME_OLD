@@ -1,0 +1,27 @@
+<h3>
+<a name="label_overlay">MINIME System (CDE with overlay)</a>
+</h3>
+
+<p>
+this option add 'rd.live.overlay=LABEL=MINIME' to kernel boot options to support persistent overlay.
+</p>
+
+<p>
+ to learn how to update system, read <a href="#update">update</a>.
+</p>
+
+<p>
+other options:
+</p>
+<p>
+1. rd.live.overlay=[devspec]:[filespec] : set location of overlay file, ex: rd.live.overlay=LABEL=SYSTEM:/overlay.img 
+</p>
+<p>
+2. rd.live.overlay.reset : reset overlay to zero to drop any change.
+</p>
+<p>
+3. rd.live.overlay.size : set overlay size in MB, default value is 512.
+</p>
+<p>
+4. rd.live.overlay.merge : merge overlay to generate new squashfs.img, temp space needed (local disk).
+</p>
