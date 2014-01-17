@@ -2,12 +2,10 @@ label_gnome
 MINIME System (GNOME)
 label_kde
 MINIME System (KDE)
-label_cde
-MINIME System (CDE)
 label_nohome
-MINIME System (CDE no persistent home)
+MINIME System (GNOME no persistent home)
 label_overlay
-MINIME System (CDE with overlay)
+MINIME System (GNOME with overlay)
 label_nuke_manual
 MINIME Disk Nuke (manual mode)
 label_nuke_auto
