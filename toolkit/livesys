@@ -283,8 +283,8 @@ fi
 
 findDesktop() {
   for arg in `cat /proc/cmdline` ; do
-    if [ "${arg##desktop=}" != "${arg}" ]; then
-      livedesktop=${arg##desktop=}
+    if [ "${arg##livedesktop=}" != "${arg}" ]; then
+      livedesktop=${arg##livedesktop=}
       return
     fi
   done
