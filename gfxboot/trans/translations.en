@@ -12,6 +12,10 @@ label_nuke_auto
 MINIME Disk Nuke (auto mode)
 label_dos
 MINIME DOS
+label_erd65_x86
+ERD Commander 6.5(x86)
+label_erd65_x64
+ERD Commander 6.5(x64)
 label_hdt
 Hardware Detection Tool
 label_memtest

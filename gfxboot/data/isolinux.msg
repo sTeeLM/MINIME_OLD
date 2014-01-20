@@ -9,8 +9,9 @@ label_overlay                  - Start MINIME Linux in GNOME with persistent ove
 label_nuke_manual              - Start Disk Nuke in manual mode
 label_nuke_auto                - Start Disk Nuke in auto mode, EXTREAMLLY DANGEROUS!!!
 label_dos                      - Start DOS
+label_erd65_x86                - Run ERD Commander(x86)
+label_erd65_x64                - Run ERD Commander(x64)
 label_harddisk                 - Local boot from hard disk
 label_memtest                  - Run Memory Test
 label_hdt                      - Run Hardware Test
-
 
