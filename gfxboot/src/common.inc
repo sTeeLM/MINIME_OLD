@@ -1379,6 +1379,25 @@
 
 } def
 
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+% Show "reboot" popup.
+%
+% ( ) ==> ( )
+%
+/reboot {
+  window.dialog
+
+  dup .title txt_reboot_title put
+  dup .text txt_reboot put
+  dup .buttons [
+    button.ok     button.notdefault    actReboot actNoClose or button.setaction
+    button.cancel button.default       actNothing                button.setaction
+    config.rtl { exch } if
+  ] put
+  dup window.init
+      window.show
+
+} def
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

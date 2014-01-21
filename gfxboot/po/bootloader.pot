@@ -141,6 +141,15 @@ msgstr ""
 msgid "Halt the system now?"
 msgstr ""
 
+#. reboot dialog title
+#. txt_reboot_title
+msgid "Reboot"
+msgstr ""
+
+#. txt_reboot
+msgid "Reboot the system now?"
+msgstr ""
+
 #. menu entry for hard disk installation
 #. txt_harddisk
 msgid "Hard Disk"

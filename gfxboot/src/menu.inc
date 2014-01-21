@@ -421,6 +421,11 @@
   % handle panel entries
   panel.input
 
+  dup keyF9 eq {
+    reboot
+    pop 0
+  } if
+
   dup keyF10 eq {
     power_off
     pop 0

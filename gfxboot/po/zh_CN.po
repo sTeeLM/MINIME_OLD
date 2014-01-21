@@ -142,11 +142,20 @@ msgstr "口令"
 #. power off dialog title
 #. txt_power_off_title
 msgid "Power Off"
-msgstr "关闭电源"
+msgstr "关机"
 
 #. txt_power_off
 msgid "Halt the system now?"
-msgstr "是否立即暂停系统？"
+msgstr "是否立即关机？"
+
+#. power off dialog title
+#. txt_reboot_title
+msgid "Reboot"
+msgstr "重起系统"
+
+#. txt_reboot
+msgid "Reboot the system now?"
+msgstr "是否立即重起系统？"
 
 #. menu entry for hard disk installation
 #. txt_harddisk
