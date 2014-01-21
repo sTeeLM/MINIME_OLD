@@ -1384,11 +1384,11 @@
 %
 % ( ) ==> ( )
 %
-/reboot {
+/re_boot {
   window.dialog
 
   dup .title txt_reboot_title put
-  dup .text txt_reboot put
+  dup .text txt_reboot_ask put
   dup .buttons [
     button.ok     button.notdefault    actReboot actNoClose or button.setaction
     button.cancel button.default       actNothing                button.setaction

@@ -19,6 +19,8 @@
 %% include dia_about.inc
 %% include dia_kernelopts.inc
 %% include dia_keymap.inc
+%% include dia_poweroff.inc
+%% include dia_reboot.inc
 %% include panel.inc
 %% include keytables.inc
 %% include locale.inc

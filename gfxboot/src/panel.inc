@@ -40,6 +40,8 @@
     config.key.F6  panel.entry dup { [ keyF6  0 "F6"  5 -1 roll { } forall ] } { pop } ifelse
     config.key.F7  panel.entry dup { [ keyF7  0 "F7"  5 -1 roll { } forall ] } { pop } ifelse
     config.key.F8  panel.entry dup { [ keyF8  0 "F8"  5 -1 roll { } forall ] } { pop } ifelse
+    config.key.F9  panel.entry dup { [ keyF9  0 "F9"  5 -1 roll { } forall ] } { pop } ifelse
+    config.key.F10 panel.entry dup { [ keyF10 0 "F10" 5 -1 roll { } forall ] } { pop } ifelse
     config.key.F11 panel.entry dup { [ keyF11 0 "F11" 5 -1 roll { } forall ] } { pop } ifelse
     config.key.F12 panel.entry dup { [ keyF12 0 "F12" 5 -1 roll { } forall ] } { pop } ifelse
 
@@ -137,6 +139,10 @@
   % not for F1
   dup keyF1 eq { return } if
 
+  dup keyF9 eq { return } if
+
+  dup keyF10 eq { return } if
+
   panel.extra.fkey .undef eq
   menu.entry 0 eq
   menu.entry menu.texts length 1 sub lt
@@ -167,6 +173,8 @@
   dup "video"      eq { pop [ /panel.video /panel.video.width /panel.video.update /video.init ] return } if
   dup "kernelopts" eq { pop [ /panel.kernelopts /panel.kernelopts.width /panel.kernelopts.update /kernelopts.init ] return } if
   dup "keymap"     eq { pop [ /panel.keymap /panel.keymap.width /panel.keymap.update /keymap.init ] return } if
+  dup "reboot"     eq { pop [ /panel.reboot /panel.reboot.width /panel.reboot.update /reboot.init ] return } if
+  dup "poweroff"   eq { pop [ /panel.poweroff /panel.poweroff.width /panel.poweroff.update /poweroff.init ] return } if
 
   dup "bits"       eq { pop
     .undef

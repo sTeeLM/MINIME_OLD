@@ -146,7 +146,7 @@ msgstr ""
 msgid "Reboot"
 msgstr ""
 
-#. txt_reboot
+#. txt_reboot_ask
 msgid "Reboot the system now?"
 msgstr ""
 

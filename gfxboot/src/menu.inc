@@ -422,7 +422,7 @@
   panel.input
 
   dup keyF9 eq {
-    reboot
+    re_boot
     pop 0
   } if
 

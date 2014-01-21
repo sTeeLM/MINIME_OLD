@@ -151,9 +151,9 @@ msgstr "是否立即关机？"
 #. power off dialog title
 #. txt_reboot_title
 msgid "Reboot"
-msgstr "重起系统"
+msgstr "重起"
 
-#. txt_reboot
+#. txt_reboot_ask
 msgid "Reboot the system now?"
 msgstr "是否立即重起系统？"
 
