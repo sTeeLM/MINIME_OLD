@@ -12,10 +12,12 @@ label_nuke_auto
 硬盘毁灭工具(自动模式)
 label_dos
 DOS 启动盘
-label_erd65_x86
-ERD Commander 6.5(x86)
-label_erd65_x64
-ERD Commander 6.5(x64)
+label_pe_x86
+Windows PE(x86)
+label_pe_x64
+Windows PE(x64)
+label_plpbt
+Plop 启动管理器
 label_hdt
 硬件检测工具
 label_memtest
