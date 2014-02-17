@@ -32,5 +32,5 @@ dwipe.elf : $(OBJS) $(LIBS) $(C_LIBS)
 	$(LD) $(LDFLAGS) -o $@ $^
 
 clean:
-	rm -rf *.o *.elf *.c32
+	rm -rf *.o *.elf *.c32 *.d
 -include .*.d
