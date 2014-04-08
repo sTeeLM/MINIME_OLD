@@ -6,6 +6,8 @@ label_nohome
 MINIME System (GNOME no persistent home)
 label_overlay
 MINIME System (GNOME with overlay)
+label_cli
+MINIME System (CLI)
 label_nuke_manual
 MINIME Disk Nuke (manual mode)
 label_nuke_auto

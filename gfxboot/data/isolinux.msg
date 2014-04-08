@@ -5,7 +5,8 @@ Available boot options:
 label_gnome                    - Start MINIME Linux in GNOME
 label_kde                      - Start MINIME Linux in KDE
 label_nohome                   - Start MINIME Linux in GNOME without persistent home
-label_overlay                  - Start MINIME Linux in GNOME with persistent overlay support
+label_overlay                  - Start MINIME Linux in GNOME with persistent overlay
+label_cli                      - Start MINIME LInux in CLI
 label_pe_x86                   - Run Windows PE(x86)
 label_pe_x64                   - Run Windows(x64)
 label_nuke_manual              - Start Disk Nuke in manual mode
