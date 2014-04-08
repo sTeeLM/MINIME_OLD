@@ -1,0 +1,164 @@
+diff -Nru /lib/dracut/modules.d/90dmsquash-live/dmsquash-live-root.sh 90dmsquash-live/dmsquash-live-root.sh
+--- /lib/dracut/modules.d/90dmsquash-live/dmsquash-live-root.sh	2014-03-20 00:16:08.000000000 +0800
++++ 90dmsquash-live/dmsquash-live-root.sh	2014-04-08 11:33:08.893411040 +0800
+@@ -26,26 +26,11 @@
+ getargbool 0 rd.live.overlay.reset -d -y reset_overlay && reset_overlay="yes"
+ getargbool 0 rd.live.overlay.readonly -d -y readonly_overlay && readonly_overlay="--readonly" || readonly_overlay=""
+ overlay=$(getarg rd.live.overlay -d overlay)
++overlay_size=$(getarg rd.live.overlay.size -d overlay_size)
+ 
+-# CD/DVD media check
+-[ -b $livedev ] && fs=$(blkid -s TYPE -o value $livedev)
+-if [ "$fs" = "iso9660" -o "$fs" = "udf" ]; then
+-    check="yes"
+-fi
+-getarg rd.live.check -d check || check=""
+-if [ -n "$check" ]; then
+-    type plymouth >/dev/null 2>&1 && plymouth --hide-splash
+-    if [ -n "$DRACUT_SYSTEMD" ]; then
+-        p=$(str_replace "$livedev" "-" '\x2d')
+-        systemctl start checkisomd5@${p}.service
+-    else
+-        checkisomd5 --verbose $livedev
+-    fi
+-    if [ $? -ne 0 ]; then
+-        die "CD check failed!"
+-        exit 1
+-    fi
+-    type plymouth >/dev/null 2>&1 && plymouth --show-splash
++if [ -z "$overlay_size" ]; then
++    overlay_size=512
++    warn "make default overlay size $overlay_size MB"
+ fi
+ 
+ ln -s $livedev /run/initramfs/livedev
+@@ -57,7 +42,9 @@
+ }
+ 
+ modprobe squashfs
+-CMDLINE=$(getcmdline)
++check="yes"
++getarg rd.live.check -d check || check=""
++
+ for arg in $CMDLINE; do case $arg in ro|rw) liverw=$arg ;; esac; done
+ # mount the backing of the live image first
+ mkdir -m 0755 -p /run/initramfs/live
+@@ -79,6 +66,21 @@
+     fi
+ fi
+ 
++if [ -n "$check" ]; then
++    warn "Checking image file..."
++    type plymouth >/dev/null 2>&1 && plymouth --hide-splash
++    pushd .
++    cd /run/initramfs/live/LiveOS/
++    md5sum -c ${squash_image}.md5
++    if [ $? -ne 0 ]; then
++        die "$squash_image check failed!"
++        exit 1
++    fi
++    popd
++    warn "Checking image file... DONE!"
++    type plymouth >/dev/null 2>&1 && plymouth --show-splash
++fi
++
+ # overlay setup helper function
+ do_live_overlay() {
+     # create a sparse file for the overlay
+@@ -112,8 +114,15 @@
+                 dd if=/dev/zero of=$OVERLAY_LOOPDEV bs=64k count=1 conv=fsync 2>/dev/null
+             fi
+             setup="yes"
++        elif [ ! -f /run/initramfs/overlayfs$pathspec ]; then
++           warn "Can not found persistent overlay, create one with size=$overlay_size MB"
++           mkdir -p /run/initramfs/overlayfs$pathspec
++           rm -rf /run/initramfs/overlayfs$pathspec
++           dd if=/dev/null of=/run/initramfs/overlayfs$pathspec bs=1024 count=1 seek=$(($overlay_size * 1024)) 2> /dev/null &&
++           losetup $OVERLAY_LOOPDEV /run/initramfs/overlayfs$pathspec &&
++           setup="yes"
+         fi
+-        umount -l /run/initramfs/overlayfs || :
++        umount -l /run/initramfs/overlayfs
+     fi
+ 
+     if [ -z "$setup" -o -n "$readonly_overlay" ]; then
+@@ -124,7 +133,7 @@
+             sleep 5
+         fi
+ 
+-        dd if=/dev/null of=/overlay bs=1024 count=1 seek=$((512*1024)) 2> /dev/null
++        dd if=/dev/null of=/overlay bs=1024 count=1 seek=$(($overlay_size*1024)) 2> /dev/null
+         if [ -n "$setup" -a -n "$readonly_overlay" ]; then
+             RO_OVERLAY_LOOPDEV=$( losetup -f )
+             losetup $RO_OVERLAY_LOOPDEV /overlay
+@@ -144,9 +153,6 @@
+         over=$OVERLAY_LOOPDEV
+     fi
+     echo 0 $sz snapshot $base $over p 8 | dmsetup create live-rw
+-
+-    # Create a device that always points to a ro base image
+-    echo 0 $sz linear $base 0 | dmsetup create --readonly live-base
+ }
+ 
+ # live cd helper function
+@@ -154,22 +160,10 @@
+     do_live_overlay
+ }
+ 
+-# we might have a genMinInstDelta delta file for anaconda to take advantage of
+-if [ -e /run/initramfs/live/${live_dir}/osmin.img ]; then
+-    OSMINSQFS=/run/initramfs/live/${live_dir}/osmin.img
+-fi
+ 
+-if [ -n "$OSMINSQFS" ]; then
+-    # decompress the delta data
+-    dd if=$OSMINSQFS of=/osmin.img 2> /dev/null
+-    OSMIN_SQUASHED_LOOPDEV=$( losetup -f )
+-    losetup -r $OSMIN_SQUASHED_LOOPDEV /osmin.img
+-    mkdir -m 0755 -p /run/initramfs/squashfs.osmin
+-    mount -n -t squashfs -o ro $OSMIN_SQUASHED_LOOPDEV /run/initramfs/squashfs.osmin
+-    OSMIN_LOOPDEV=$( losetup -f )
+-    losetup -r $OSMIN_LOOPDEV /run/initramfs/squashfs.osmin/osmin
+-    umount -l /run/initramfs/squashfs.osmin
+-fi
++dd if=/dev/null of=/osmin bs=1024 count=1 seek=$((512*1024)) 2> /dev/null
++OSMIN_LOOPDEV=$( losetup -f )
++losetup $OSMIN_LOOPDEV /osmin
+ 
+ # we might have an embedded fs image to use as rootfs (uncompressed live)
+ if [ -e /run/initramfs/live/${live_dir}/ext3fs.img ]; then
+@@ -220,6 +214,12 @@
+ if [ -b "$OSMIN_LOOPDEV" ]; then
+     # set up the devicemapper snapshot device, which will merge
+     # the normal live fs image, and the delta, into a minimzied fs image
++    echo "0 $( blockdev --getsz $BASE_LOOPDEV ) snapshot $BASE_LOOPDEV $OSMIN_LOOPDEV p 8" | dmsetup create live-osimg-min
++    e2label /dev/mapper/live-osimg-min MINIME-LIVE
++    sync
++    dmsetup remove --retry live-osimg-min
++    sync
++    dmsetup remove --retry live-osimg-min
+     echo "0 $( blockdev --getsz $BASE_LOOPDEV ) snapshot $BASE_LOOPDEV $OSMIN_LOOPDEV p 8" | dmsetup create --readonly live-osimg-min
+ fi
+ 
+@@ -228,6 +228,9 @@
+     ROOTFLAGS="-o $ROOTFLAGS"
+ fi
+ 
++if [ -b "$BASE_LOOPDEV" ]; then
++    ln -s $BASE_LOOPDEV /run/initramfs/live-baseloop
++fi
+ ln -s /dev/mapper/live-rw /dev/root
+ printf 'mount %s /dev/mapper/live-rw %s\n' "$ROOTFLAGS" "$NEWROOT" > $hookdir/mount/01-$$-live.sh
+ 
+diff -Nru /lib/dracut/modules.d/90dmsquash-live/module-setup.sh 90dmsquash-live/module-setup.sh
+--- /lib/dracut/modules.d/90dmsquash-live/module-setup.sh	2014-03-20 00:16:08.000000000 +0800
++++ 90dmsquash-live/module-setup.sh	2014-04-08 11:33:08.894411065 +0800
+@@ -24,7 +24,7 @@
+ 
+ # called by dracut
+ install() {
+-    inst_multiple umount dmsetup blkid dd losetup grep blockdev
++    inst_multiple umount dmsetup blkid dd losetup grep blockdev e2label md5sum
+     inst_multiple -o checkisomd5
+     inst_hook cmdline 30 "$moddir/parse-dmsquash-live.sh"
+     inst_hook cmdline 31 "$moddir/parse-iso-scan.sh"
