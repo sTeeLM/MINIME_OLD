@@ -1,11 +1,11 @@
-label_gnome
-MINIME系统(GNOME)
 label_kde
 MINIME系统(KDE)
+label_gnome
+MINIME系统(GNOME)
 label_nohome
-MINIME系统(GNOME不使用Home.img)
+MINIME系统(KDE不使用Home.img)
 label_overlay
-MINIME系统(GNOME使用Overlay)
+MINIME系统(KDE使用Overlay)
 label_cli
 MINIME系统(命令行模式)
 label_nuke_manual
@@ -13,7 +13,7 @@ label_nuke_manual
 label_nuke_auto
 硬盘毁灭工具(自动模式)
 label_dos
-DOS 启动盘
+DOS
 label_pe_x86
 Windows PE(x86)
 label_pe_x64
