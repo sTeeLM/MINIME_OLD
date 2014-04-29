@@ -51,7 +51,7 @@ diff -Nru /lib/dracut/modules.d/90dmsquash-live/dmsquash-live-root.sh 90dmsquash
 +    warn "Checking image file..."
 +    type plymouth >/dev/null 2>&1 && plymouth --hide-splash
 +    pushd .
-+    cd /run/initramfs/live/LiveOS/
++    cd /run/initramfs/live/${live_dir}/
 +    md5sum -c ${squash_image}.md5
 +    if [ $? -ne 0 ]; then
 +        die "$squash_image check failed!"

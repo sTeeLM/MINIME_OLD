@@ -6,8 +6,8 @@ label_nohome
 MINIME System (KDE no persistent home)
 label_overlay
 MINIME System (KDE with overlay)
-label_cli
-MINIME System (CLI)
+label_ram
+MINIME System (All In RAM)
 label_nuke_manual
 MINIME Disk Nuke (manual mode)
 label_nuke_auto

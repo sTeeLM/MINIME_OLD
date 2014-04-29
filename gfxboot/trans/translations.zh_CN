@@ -6,8 +6,8 @@ label_nohome
 MINIME系统(KDE不使用Home.img)
 label_overlay
 MINIME系统(KDE使用Overlay)
-label_cli
-MINIME系统(命令行模式)
+label_ram
+MINIME系统(全内存模式)
 label_nuke_manual
 硬盘毁灭工具(手动模式)
 label_nuke_auto

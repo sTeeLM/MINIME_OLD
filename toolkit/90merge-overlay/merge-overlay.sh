@@ -6,6 +6,16 @@ echo 'merge overlay mode by sTeeL<steel.mental@gmail.com>'
 echo '---------------------------------------------------'
 echo
 
+type getarg >/dev/null 2>&1 || . /lib/dracut-lib.sh
+
+live_dir=$(getarg rd.live.dir -d live_dir)
+[ -z "$live_dir" ] && live_dir="LiveOS"
+squash_image=$(getarg rd.live.squashimg)
+[ -z "$squash_image" ] && squash_image="squashfs.img"
+
+echo live_dir is ${live_dir}
+echo squash_image is ${squash_image}
+
 ROOT_DEV=/dev/mapper/live-rw
 
 export LANG=C
@@ -21,7 +31,7 @@ root_dev_size=$(blockdev --getsize64 $ROOT_DEV)
 min_temp_size=$(($root_dev_size * 2))
 live_root_dir=/run/initramfs/live
 
-if [ ! -e $live_root_dir/LiveOS/squashfs.img -o ! -w $live_root_dir/LiveOS/squashfs.img ]; then
+if [ ! -e $live_root_dir/${live_dir}/${squash_image} -o ! -w $live_root_dir/${live_dir}/${squash_image} ]; then
     echo "$live_root_dir not exist or not writable, quit!"
     exit 1
 fi
@@ -252,27 +262,27 @@ echo "Clearing root image"
 clearRootImage $temp_root_dir/fsimg/LiveOS/ext3fs.img &&
 echo "Done"
 
-echo "Making new squash fs as $temp_root_dir/squashfs.img"
-mksquashfs "$temp_root_dir/fsimg/" "$temp_root_dir/squashfs.img" -b 524288 -comp xz -Xbcj x86 &&
+echo "Making new squash fs as $temp_root_dir/${squash_image}"
+mksquashfs "$temp_root_dir/fsimg/" "$temp_root_dir/${squash_image}" -b 524288 -comp xz -Xbcj x86 &&
 echo "Done"
 
-if [ ! -f "$temp_root_dir/squashfs.img" ]; then
+if [ ! -f "$temp_root_dir/${squash_image}" ]; then
     "Run mksquash fail, quit!"
     exit 1
 fi
 
 
-echo "Backing up old img as $temp_root_dir/backup/squashfs.img"
+echo "Backing up old img as $temp_root_dir/backup/${squash_image}"
 mkdir -p "$temp_root_dir/backup" &&
-pv -tpreb -i 2 $live_root_dir/LiveOS/squashfs.img | dd of="$temp_root_dir/backup/squashfs.img" &&
-rm -f $live_root_dir/LiveOS/squashfs.img &&
-rm -f $live_root_dir/LiveOS/osmin.img &&
+pv -tpreb -i 2 $live_root_dir/${live_dir}/${squash_image} | dd of="$temp_root_dir/backup/${squash_image}" &&
+rm -f $live_root_dir/${live_dir}/${squash_image} &&
+rm -f $live_root_dir/${live_dir}/osmin.img &&
 echo "Done"
 
 
-echo "Copying new img as $live_root_dir/LiveOS/squashfs.img"
-pv -tpreb -i 2 "$temp_root_dir/squashfs.img" | dd of=$live_root_dir/LiveOS/squashfs.img &&
-rm -rf "$temp_root_dir/squashfs.img" &&
+echo "Copying new img as $live_root_dir/${live_dir}/${squash_image}"
+pv -tpreb -i 2 "$temp_root_dir/${squash_image}" | dd of=$live_root_dir/${live_dir}/${squash_image} &&
+rm -rf "$temp_root_dir/${squash_image}" &&
 rm -rf "$temp_root_dir/osmin.img" &&
 rm -rf "$temp_root_dir/fsimg" &&
 echo "Done"
@@ -282,8 +292,8 @@ closeTempRoot $select_device
 
 pushd .
 echo "Creating MD5 sum"
-cd $live_root_dir/LiveOS/ && 
-md5sum -b squashfs.img > squashfs.img.md5 &&
+cd $live_root_dir/${live_dir}/ && 
+md5sum -b ${squash_image} > ${squash_image}.md5 &&
 echo "Done"
 popd
 
@@ -293,5 +303,5 @@ echo "FINISH!!"
 echo "Backup is $temp_root_dir/backup"
 echo "Remember clear overlay manually after reboot"
 echo "1. test new squash image with no overlay"
-echo "2. remove LiveOS/overlay-xxx-xxx"
+echo "2. remove ${live_dir}/overlay-xxx-xxx"
 exit 0
