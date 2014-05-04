@@ -14,6 +14,7 @@ label_nuke_auto                - Start Disk Nuke in auto mode, EXTREAMLLY DANGER
 label_dos                      - Start DOS
 label_harddisk                 - Local boot from hard disk
 label_plpbt                    - Run Plot boot manager
+label_grub4dos                 - Run Grub4DOS
 label_memtest                  - Run Memory Test
 label_hdt                      - Run Hardware Test
 

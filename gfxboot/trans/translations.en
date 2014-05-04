@@ -20,6 +20,8 @@ label_pe_x64
 Windows PE(x64)
 label_plpbt
 Plop Boot Manager
+label_grub4dos
+Grub4DOS
 label_hdt
 Hardware Detection Tool
 label_memtest

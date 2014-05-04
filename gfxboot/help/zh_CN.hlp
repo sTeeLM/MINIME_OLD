@@ -1,0 +1,76 @@
+help使用帮助系统上下文帮助系统
+Navigation Keys 
+  • Up Arrow: 高亮前一个链接  • Down Arrow: 高亮后一个链接  • Left Arrow, Backspace: 返回上一级  • Right Arrow, Enter, Space: 进入链接  • Page Up: 向上滚动  • Page Down: 向下滚动  • Home: 页面开始  • End: 页面结尾  • Esc: 离开main启动界面帮助Welcome to MINIME
+MINIME系统是一个可自升级，包含各种辅助工具的Linux修改版本，由sTeeL(steel.mental@gmail.com)开发。MINIME这个名字如果你经常看电影，应该知道来历。
+选择你关心的功能，有问题按F1进入help帮助系统 如下是菜单功能:
+label_kdeMINIME系统(KDE):启动MINIME Linux，进入KDE桌面管理器。
+label_gnomeMINIME系统(GNOME):启动MINIME Linux，进入GNOME桌面管理器。
+label_nohomeMINIME系统(KDE不使用Home.img): 进入MINIME KDE，忽略持久化的Home分区。
+label_overlayMINIME系统(KDE使用Overlay): 进入MINIME KDE，打开overlay支持。
+label_ramMINIME系统(全内存模式): 进入MINIME，使用命令行模式界面，并且完全在内存中运行。
+label_nuke_manual硬盘毁灭工具(手动模式): 进入硬盘毁灭工具手动模式，允许选择哪些硬盘，何种模式。
+label_nuke_auto硬盘毁灭工具(自动模式): 进入硬盘毁灭工具自动模式，一旦选择，你所有本地硬盘都会自动化地被清除，很危险！
+label_dosDOS: 进入一个小DOS，包含各种工具，刷BIOS可以用这个选项。
+label_pe_x86Windows PE(x86): 基于WinPE的强大管理工具。
+label_pe_x64Windows PE(x64): 基于WinPE的强大管理工具。
+label_plpbtPlop 启动管理器: Plop 启动管理器。
+label_grub4dos启动Grub4DOS: 启动著名的Grub4DOS。
+label_harddisk启动本地硬盘: 启动本地硬盘安装的系统。
+label_hdt硬件检测工具: 检测本机硬件。
+label_memtest内存检测: 启动一个小工具检测本机内存。
+noacpi禁止ACPI: 禁止ACPI支持。
+nolapic禁止本地APIC: 禁止本地APIC支持。
+opt启动选项: 附加额外的启动选项。
+helpF1 帮助: 打开上下文帮助。
+keytableF2: 选择启动界面的语言。
+videomodeF3 选择分辨率: 选择分辨率，如果图形界面有问题，请使用text modekeytable语言和键盘选择使用F2选择键盘和语言。
+返回main启动界面帮助label_dosDOS基于DOS 7.1 的DOS发布版，支持本地CD，支持本地FAT32格式硬盘，支持中文，包含Ghost和Turbo C++。
+返回main启动界面帮助label_gnomeMINIME系统(GNOME)启动MINIME Linux，进入GNOME桌面管理器。
+返回main启动界面帮助label_grub4dos启动Grub4DOS运行Grub4DOS bootloader，包含一个示例菜单。
+返回main启动界面帮助label_harddisk启动本地硬盘这个选项用来从本地硬盘启动。
+返回main启动界面帮助label_hdt硬件检测工具硬件检测工具提供了一个检测本地硬件的小工具。主要用来检测本地都有那些PCI硬件，对应的Linux驱动是神马等等。
+返回main启动界面帮助label_kdeMINIME系统(KDE)启动MINIME Linux，进入KDE桌面管理器。
+返回main启动界面帮助label_memtest内存检测内存检测工具检测本地内存是否有问题。
+虽然此工具能发现大部分问题，但是还是有少数内存问题检测不到。
+返回main启动界面帮助label_nohomeMINIME系统 (KDE不使用Home.img)这个选项添加'nopersistenthome'到内核启动选项。使系统不使用本地的持久化Home分区，Home分区位于U盘的/LiveOS/home.img。
+返回main启动界面帮助label_nuke_auto硬盘毁灭工具(自动模式)这个选项添加'rd.dwipe'和'rd.dwipe.exlcude=LABEL=MINIME'到内核的启动选项。
+自动模式: 不询问你，直接清除所有本地硬盘，没有任何后悔药，极度危险！！。
+返回main启动界面帮助label_nuke_manual硬盘毁灭工具这个选项添加'rd.dwipe'和'rd.dwipe.exlcude=LABEL=MINIME'到内核的启动选项。
+手动模式: 在进行真正的数据删除之前，你有机会选择清除哪些硬盘，使用什么模式(dod标准还是全部清0等等)。你还有机会反悔。
+返回main启动界面帮助label_overlayMINIME系统(KDE使用Overlay)这个选项添加'rd.live.overlay=LABEL=MINIME'到内核启动选项以支持持久化overlay。通过这个选项，对系统做的任何修改都被保存并持久化下来，后继可以使用'rd.live.overlay.merge'来把这些修改合并到squashfs.img中。一般当你想要升级系统镜像的时候使用这个选项，想要知道如何升级系统，清阅读update升级系统。
+选项说明:
+1. rd.live.overlay=[devspec]:[filespec] : 指定overlay文件的位置，例如: rd.live.overlay=LABEL=SYSTEM:/overlay.img，其中'SYSTEM'是硬盘标签，'/overlay.img'是文件名。
+2. rd.live.overlay.reset : 清除overlay中所有的内容。
+3. rd.live.overlay.size : 设置overlay大小(MB)，默认是512。
+4. rd.live.overlay.merge : 启动一个小界面，合并overlay到squashfs.img中。
+返回main启动界面帮助update升级升级MINIME系统，你需要：
+1. 备份U盘上的/isolinux/initrd0.img和/isolinux/vmlinuz0，并确保本地硬盘至少有40GB的空闲空间。
+2. 启动系统，打开label_overlayoverlay支持。overlay文件默认会放在U盘的/LiveOS/overlay-MINIME-xxxx-xxxx(x为16进制数字)， 你可以修改rd.live.overlay 选项，使用本地硬盘作为overlay空间，例如如果Window系统上一个分区叫DATA，可以将改选项设置为rd.live.overlay=LABEL=DATA，这样overay文件会放在DATA分区的/LiveOS/overlay-MINIME-xxxx-xxxx下。另外也可以修改rd.live.overlay.size选项为一个更大的数，以防止升级内容太多，占满overlay。
+3. 进行系统升级(yum update)，如果内核升级了，需要在升级之后，运行 "dracut -c /etc/minime.conf --xz new.img [新内核版本]" 生成新initrd，然后用新initrd，也就是new.img 覆盖/run/initramfs/live/isolinux/initrd0.img（覆盖U盘上同名文件），用新内核（/boot/vmlinuz-内核版本）覆盖/run/initramfs/live/isolinux/vmlinuz0。
+4. 重起系统，打开overlay选项，并且添加rd.live.overlay.merge启动参数，会出现一个界面让你选一个本地硬盘分区作为临时空间，如果本地硬盘空闲空间小于40G可能会失败。这个步骤会备份原有squashfs.img，合并squashfs.img和overlay，并替换原有squashfs.img，时间比较长，请耐心等待。
+5. 重起系统，关闭overlay支持，运行"dracut -c /etc/minime.conf --xz new.img"，用new.img覆盖/run/initramfs/live/isolinux/initrd0.img（是的，如果内核被升级，需要运行dracut两次），这个步骤将更新版本号和升级时间（也就是显示在启动屏幕上的那行"MINIME x.x build at xxx"）。
+6. 如果一切都OK，可以删除备份的vmlinuz0和initrd0.img，以及squashfs.img（这个文件在步骤4中被自动备份到本地硬盘），overlay文件也可以被删除。
+7. 如果出错，用备份的vmlinuz0和initrd0.img，以及squashfs.img替换U盘上同名文件即可。
+返回label_overlayMINIME系统(KDE使用Overlay)label_pe_x64Window PE(x64)基于WinPE的强大工具集。
+返回main启动界面帮助label_pe_x86Windows PE(x86)基于WinPE的强大工具集。
+返回main启动界面帮助label_plpbtPlop 启动管理器运行Plop 启动管理器。
+返回main启动界面帮助label_ramMINIME系统(全内存模式)启动MINIME Linux，进入命令行界面，该模式完全在内存中运行，这意味着启动之后，你可以安全拔出U盘。
+返回main启动界面帮助noacpi禁止ACPI现代硬件通常支持 ACPI (Advanced Configuration and Power Interface)，用来处理中断等。老的APM很少有人用。
+如果不能启动内核，可以尝试选择禁止ACPI，常见的症状有： 
+  • 内核启动过程中僵死  • PCI外设不能被检测到或者工作不正常
+返回main启动界面帮助nolapic禁止本地APICAPIC (Advanced Programmable Interrupt Controller)一般没有问题，如果不能启动内核，可以选择这个选项。
+注意不要把这个和noacpiACPI(Advanced Configuration and Power Interface)混淆。
+返回main启动界面帮助opt内核启动选项内核启动选项 
+  • o_apmapm -- toggle power management  • o_acpiacpi -- advanced configuration and power interface  • o_ideide -- control the IDE subsystem
+返回main启动界面帮助o_acpi内核选项: acpiACPI (Advanced Configuration and Power Interface) 定义了内核和BIOS之间的标准电源和配置管理接口。默认情况下，如果BIOS新于2000年，acpi是打开状态，有一些通用的内核启动选项用来控制ACPI: switched on when a BIOS is detected that is newer than from year 
+  • pci=noacpi -- do not use ACPI to route PCI interrupts  • acpi=oldboot -- only the parts of ACPI that are relevant for booting remain activated  • acpi=off -- switch off ACPI completely  • acpi=force -- switch on ACPI even if your BIOS is dated before 2000
+在新系统上，ACPI已经替换了老o_apmapm系统.
+返回opt内核启动选项o_apm内核选项: apm一般情况下，笔记本的'硬盘休眠'功能会使用APM，开关机也许也会用到，APM依赖于一个正确配置的BIOS，如果BIOS 有问题，APM可能会出问题，此时不如彻底禁止APM。 
+  • apm=off -- switch off APM completely
+新系统一般使用o_acpiACPI.
+返回opt内核启动选项o_ide内核选项: ideIDE是一种常见的硬盘接口，如果硬盘有问题可以尝试如下选项: 
+  • ide=nodma -- switch off DMA for IDE drives
+返回opt内核启动选项videomode选择分辨率按下F3察看可用的分辨率并加以选择。
+如果自动化探测结果不正确，你可用手动选择一个。
+如果在使用中图形界面有问题 text mode 也许是一个选择。
+返回main启动界面帮助 

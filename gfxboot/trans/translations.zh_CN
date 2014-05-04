@@ -20,6 +20,8 @@ label_pe_x64
 Windows PE(x64)
 label_plpbt
 Plop 启动管理器
+label_grub4dos
+启动 Grub4DOS
 label_hdt
 硬件检测工具
 label_memtest
