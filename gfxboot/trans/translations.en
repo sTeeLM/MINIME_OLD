@@ -13,11 +13,13 @@ MINIME Disk Nuke (manual mode)
 label_nuke_auto
 MINIME Disk Nuke (auto mode)
 label_dos
-DOS
+MINIME DOS
 label_pe_x86
 Windows PE(x86)
 label_pe_x64
 Windows PE(x64)
+label_atih
+Acronis True Image
 label_plpbt
 Plop Boot Manager
 label_grub4dos

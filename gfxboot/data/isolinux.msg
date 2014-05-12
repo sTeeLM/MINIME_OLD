@@ -9,6 +9,7 @@ label_overlay                  - Start MINIME Linux in KDE with persistent overl
 label_ram                      - Start MINIME Linux in RAM
 label_pe_x86                   - Run Windows PE(x86)
 label_pe_x64                   - Run Windows PE(x64)
+label_atih		       - Run Acronis True Image
 label_nuke_manual              - Start Disk Nuke in manual mode
 label_nuke_auto                - Start Disk Nuke in auto mode, EXTREAMLLY DANGEROUS!!!
 label_dos                      - Start DOS

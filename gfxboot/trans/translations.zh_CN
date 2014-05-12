@@ -13,11 +13,13 @@ label_nuke_manual
 label_nuke_auto
 硬盘毁灭工具(自动模式)
 label_dos
-DOS
+启动 MINIME DOS
 label_pe_x86
 Windows PE(x86)
 label_pe_x64
 Windows PE(x64)
+label_atih
+Acronis True Image
 label_plpbt
 Plop 启动管理器
 label_grub4dos
