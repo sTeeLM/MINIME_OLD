@@ -6,6 +6,7 @@ CCMDLine::CCMDLine(void)
 	m_szFile = _T("");
 	m_szFilter = _T("");
 	m_bIsOpen  = FALSE;
+	m_bIsFileDlg = TRUE;
 }
 
 CCMDLine::~CCMDLine(void)
@@ -30,15 +31,23 @@ void CCMDLine::ParseParam(
 		return;
 	}
 
+
+
 	if(key.CompareNoCase(_T("file")) == 0) {
 		m_szFile = val;
 	} else if(key.CompareNoCase(_T("filter")) == 0) {
 		m_szFilter = val;
-	} else if(key.CompareNoCase(_T("type")) == 0) {
+	} else if(key.CompareNoCase(_T("dlgtype")) == 0) {
 		if(val.CompareNoCase(_T("open")) == 0) {
 			m_bIsOpen = TRUE;
 		} else {
 			m_bIsOpen = FALSE;
+		}
+	} else if(key.CompareNoCase(_T("type")) == 0) {
+		if(val.CompareNoCase(_T("file")) == 0) {
+			m_bIsFileDlg = TRUE;
+		} else {
+			m_bIsFileDlg = FALSE;
 		}
 	}
 }
