@@ -5,6 +5,7 @@ CCMDLine::CCMDLine(void)
 {
 	m_szFile = _T("");
 	m_szFilter = _T("");
+	m_szDlgTitle = _T("");
 	m_bIsOpen  = FALSE;
 	m_bIsFileDlg = TRUE;
 }
@@ -49,5 +50,7 @@ void CCMDLine::ParseParam(
 		} else {
 			m_bIsFileDlg = FALSE;
 		}
+	} else if(key.CompareNoCase(_T("dlgtitle")) == 0) {
+		m_szDlgTitle = val;
 	}
 }

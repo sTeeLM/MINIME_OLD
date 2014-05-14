@@ -15,6 +15,7 @@ public:
 
 	CString m_szFile;
 	CString m_szFilter;
+	CString m_szDlgTitle;
 	BOOL   m_bIsOpen;
 	BOOL   m_bIsFileDlg;
 };

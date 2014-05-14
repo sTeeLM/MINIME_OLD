@@ -51,7 +51,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			bi.hwndOwner        =   NULL; 
 			bi.pidlRoot         =   NULL; 
 			bi.pszDisplayName   =   szDisplayName; 
-			bi.lpszTitle        =   _T("ÇëÑ¡ÔñÎÄ¼þ¼Ð"); 
+			bi.lpszTitle        =   (LPCTSTR)cmdLine.m_szDlgTitle; 
 			bi.ulFlags          =   BIF_RETURNONLYFSDIRS|BIF_NEWDIALOGSTYLE;
 			bi.lParam           =   NULL; 
 			bi.iImage           =   0;  
@@ -67,6 +67,8 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 					 nRetCode = 0;
 					_tprintf(_T("%s"), szPathName);
 				 }
+			} else {
+				nRetCode = 1;
 			}
 		}
 	}
