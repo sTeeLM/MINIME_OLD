@@ -13,13 +13,13 @@ MINIME Disk Nuke (manual mode)
 label_nuke_auto
 MINIME Disk Nuke (auto mode)
 label_dos
-MINIME DOS
+MINIME DOS Tool Box
 label_pe_x86
-Windows PE(x86)
+Windows PE(x86) Tool Box
 label_pe_x64
 Windows PE(x64)
 label_atih
-Acronis True Image
+Acronis ATIH2014 Boot Disk
 label_plpbt
 Plop Boot Manager
 label_grub4dos
@@ -27,6 +27,6 @@ Grub4DOS
 label_hdt
 Hardware Detection Tool
 label_memtest
-Memory Test
+Memory Test Tool
 label_harddisk
 Boot Local Hard Disk
