@@ -8,6 +8,10 @@ label_overlay
 MINIME系统(使用Overlay)
 label_ram
 MINIME系统(全内存模式)
+label_kali
+KALI Linux 渗透测试工具
+label_kali_forensic
+KALI Linux 渗透测试工具 (安全模式)
 label_nuke_manual
 硬盘毁灭工具(手动模式)
 label_nuke_auto
