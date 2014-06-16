@@ -11,7 +11,7 @@ MINIME System (All In RAM)
 label_kali
 KALI Linux Penetration Testing
 label_kali_forensic
-KALI Linux Penetration Testing (安全模式)
+KALI Linux Penetration Testing (safe mode)
 label_nuke_manual
 MINIME Disk Nuke (manual mode)
 label_nuke_auto
