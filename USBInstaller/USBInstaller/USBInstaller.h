@@ -37,6 +37,7 @@ public:
 // й╣ож
 private:
 	BOOL InitializeDevice();
+	virtual int ExitInstance();
 	int GetUsbDeviceList(usb_device_info *usb_list, int list_size);
 	int GetUsbDeviceFriendName(usb_device_info *usb_list, int list_size);
 	int GetUsbDeviceGeometry(usb_device_info *usb_list, int list_size);

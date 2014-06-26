@@ -6,7 +6,7 @@
 #include "LogBox.h"
 #include <stdarg.h>
 
-#define MAX_LOG_LINE 4096
+#define MAX_LOG_LINE 409600
 
 // CLogBox
 

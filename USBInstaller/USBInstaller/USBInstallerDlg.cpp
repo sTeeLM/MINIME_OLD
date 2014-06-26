@@ -156,7 +156,7 @@ BOOL CUSBInstallerDlg::OnInitDialog()
 	m_ctlDevice.SetCurSel(0);
 	
 	m_ctlRootPath.SetWindowText(_T(""));
-	m_btnStartStop.SetCaption(_T("开始"),_T("停止"));
+	m_btnStartStop.SetCaption(_T("开始"),_T("取消"));
 	m_ctlLog.Initialize();
 
 	ResetBurn();
