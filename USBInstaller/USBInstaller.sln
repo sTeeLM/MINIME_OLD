@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "USBInstaller", "USBInstaller\USBInstaller.vcproj", "{19B64E6D-E2BC-4442-9FE8-F347830E8CCA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EA9245D6-1064-47E6-A3D0-BD94CA3D079E} = {EA9245D6-1064-47E6-A3D0-BD94CA3D079E}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFAT", "libFAT\libFAT.vcproj", "{EA9245D6-1064-47E6-A3D0-BD94CA3D079E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcproj", "{D38ECA66-1AEC-4887-9545-11C979A643A0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EA9245D6-1064-47E6-A3D0-BD94CA3D079E} = {EA9245D6-1064-47E6-A3D0-BD94CA3D079E}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19B64E6D-E2BC-4442-9FE8-F347830E8CCA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{19B64E6D-E2BC-4442-9FE8-F347830E8CCA}.Debug|Win32.Build.0 = Debug|Win32
+		{19B64E6D-E2BC-4442-9FE8-F347830E8CCA}.Release|Win32.ActiveCfg = Release|Win32
+		{19B64E6D-E2BC-4442-9FE8-F347830E8CCA}.Release|Win32.Build.0 = Release|Win32
+		{EA9245D6-1064-47E6-A3D0-BD94CA3D079E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EA9245D6-1064-47E6-A3D0-BD94CA3D079E}.Debug|Win32.Build.0 = Debug|Win32
+		{EA9245D6-1064-47E6-A3D0-BD94CA3D079E}.Release|Win32.ActiveCfg = Release|Win32
+		{EA9245D6-1064-47E6-A3D0-BD94CA3D079E}.Release|Win32.Build.0 = Release|Win32
+		{D38ECA66-1AEC-4887-9545-11C979A643A0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D38ECA66-1AEC-4887-9545-11C979A643A0}.Debug|Win32.Build.0 = Debug|Win32
+		{D38ECA66-1AEC-4887-9545-11C979A643A0}.Release|Win32.ActiveCfg = Release|Win32
+		{D38ECA66-1AEC-4887-9545-11C979A643A0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
