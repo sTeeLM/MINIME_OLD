@@ -61,10 +61,16 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 			if   (NULL   !=   pidl)
 			{
 				 BOOL bRet = SHGetPathFromIDList(pidl,szPathName);
+				 size_t nLen = 0;
 				 if(FALSE == bRet) {
 					  nRetCode = 1;
 				 } else {
 					 nRetCode = 0;
+					 nLen = _tcslen(szPathName);
+					 if(szPathName[nLen - 1] != _T('\\')) {
+						szPathName[nLen] = _T('\\');
+						szPathName[++nLen] = 0;
+					 }
 					_tprintf(_T("%s"), szPathName);
 				 }
 			} else {
