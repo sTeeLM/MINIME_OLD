@@ -530,7 +530,7 @@ err:
 	return ret;
 
 }
-#define MINIME_FREE_SIZE 100 * 1024 * 1024 // part 2 最小空闲空间，part2除了放MINIME，还需要保留这么多空间
+#define MINIME_FREE_SIZE 500 * 1024 * 1024 // part 2 最小空闲空间，part2除了放MINIME，还需要保留这么多空间
 #define MINIME_MIN_SIZE 100 * 1024 * 1024  // MINIME 最小大小，如果MINIMI不足这个大小，按照这个大小算
 #define CUSTOM_MIN_SIZE	100 * 1024 * 1024  // part 1 最小空间，不然格式化有问题
 BOOL CUSBInstallerDlg::DetectPartSize(usb_device_info_t *device, DWORD * szt, CUSBInstallerDlg * _this)
