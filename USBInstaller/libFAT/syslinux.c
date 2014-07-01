@@ -671,6 +671,7 @@ LIBFAT_API FAT_RESULT FAT_syslinux_install (BYTE pd, UINT part, BYTE vol, LPCTST
 		pSectors[j]-= dwVolOff;
 	}
 
+#ifdef _DEBUG
 	{
 		TCHAR Buffer[1024];
 		UINT j;
@@ -679,7 +680,7 @@ LIBFAT_API FAT_RESULT FAT_syslinux_install (BYTE pd, UINT part, BYTE vol, LPCTST
 			OutputDebugString(Buffer);
 		}
 	}
-
+#endif
 	// unmount fs
 	FAT_unmount(fs);
 	fs = NULL;
