@@ -83,7 +83,7 @@ CAPTION "关于 USBInstaller"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
-    LTEXT           "USBInstaller，1.0 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "USBInstaller，1.1 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "sTeeL Copyright (C) 2014",IDC_STATIC,42,26,114,8
     DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
 END
@@ -109,8 +109,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,1,0,0
+ PRODUCTVERSION 1,1,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -127,12 +127,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "sTeeL"
             VALUE "FileDescription", "MINIME 安装程序"
-            VALUE "FileVersion", "1.0.0.1"
+            VALUE "FileVersion", "1.1.0.0"
             VALUE "InternalName", "USBInstaller.exe"
             VALUE "LegalCopyright", "(C) Mad Cat Stdio。保留所有权利。"
             VALUE "OriginalFilename", "USBInstaller.exe"
             VALUE "ProductName", "MINIME 安装程序"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "ProductVersion", "1.1.0.0"
         END
     END
     BLOCK "VarFileInfo"

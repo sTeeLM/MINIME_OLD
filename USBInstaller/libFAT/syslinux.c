@@ -16,7 +16,7 @@ extern unsigned int __ldlinux_bss_len;
 extern const unsigned char __mbr_bin[];
 extern unsigned int __mbr_bin_len;
 
-#define FAT_SYSLINUX_VERSION _T("SYSLINUX 5.10")
+#define FAT_SYSLINUX_VERSION _T("SYSLINUX 6.03")
 
 #define X86_MEM 1
 
