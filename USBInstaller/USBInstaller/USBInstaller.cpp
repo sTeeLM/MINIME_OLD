@@ -81,7 +81,7 @@ int CUSBInstallerApp::GetUsbDeviceGeometry(usb_device_info *usb_list, int list_s
 	int res = 0;
 	TCHAR driveName[128];
 	HANDLE drive;
-	DWORD count;
+	DWORD count, dwErr;
 	for(i = 0 ; i < list_size; i ++) {
 		 _stprintf_s(driveName, _countof(driveName), _T("\\\\.\\PHYSICALDRIVE%d"), usb_list[i].device_num);
 
@@ -96,11 +96,14 @@ int CUSBInstallerApp::GetUsbDeviceGeometry(usb_device_info *usb_list, int list_s
 		}
 		if (!DeviceIoControl(drive, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX, NULL, 0,
 				&usb_list[i].geometry, sizeof(usb_list[i].geometry), &count, NULL)) {
-			CloseHandle(drive);
-			goto err;
+			usb_list[i].usable = FALSE;
+		} else {
+			usb_list[i].usable = TRUE;
+			res ++;
 		}
+		CloseHandle(drive);
 	}
-	return list_size;
+	return res;
 err:
 	return 0;
 }
@@ -210,14 +213,11 @@ BOOL CUSBInstallerApp::InitializeDevice()
 {
 	memset(m_UsbList, 0, sizeof(m_UsbList));  
 	int usb_cnt = GetUsbDeviceList(m_UsbList, _countof(m_UsbList));
-	int usb_total = usb_cnt;
 	TRACE(_T("System has %d USB disk.\n"), usb_cnt);  
     if (usb_cnt > 0)  
     {  
-        usb_cnt = GetUsbDeviceFriendName(m_UsbList, usb_cnt);
-		if(usb_cnt == usb_total) {
-			usb_cnt = GetUsbDeviceGeometry(m_UsbList, usb_cnt);
-		}
+        GetUsbDeviceFriendName(m_UsbList, usb_cnt);
+		GetUsbDeviceGeometry(m_UsbList, usb_cnt);
     }
  
     for (int i = 0; i < usb_cnt; i++)  
@@ -225,9 +225,7 @@ BOOL CUSBInstallerApp::InitializeDevice()
 		TRACE(_T("%c: %s\n"), m_UsbList[i].volume, m_UsbList[i].friendname);  
 	}  
 
-	if(usb_total == usb_cnt) {
-		m_UsbCount = usb_cnt;
-	}
+	m_UsbCount = usb_cnt;
 
 	return m_UsbCount != 0;
 }

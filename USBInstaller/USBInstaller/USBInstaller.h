@@ -19,6 +19,7 @@ typedef struct usb_device_info
 	DISK_GEOMETRY_EX geometry;
 	HANDLE  hdevice;
 	HANDLE  hvolume;
+	BOOL	usable;
 }usb_device_info_t;
 
 // CUSBInstallerApp:
