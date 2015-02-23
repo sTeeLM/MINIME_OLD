@@ -273,18 +273,18 @@ fi
 
 
 echo "Backing up old img as $temp_root_dir/backup/${squash_image}"
-mkdir -p "$temp_root_dir/backup" &&
-pv -tpreb -i 2 $live_root_dir/${live_dir}/${squash_image} | dd of="$temp_root_dir/backup/${squash_image}" &&
-rm -f $live_root_dir/${live_dir}/${squash_image} &&
-rm -f $live_root_dir/${live_dir}/osmin.img &&
+mkdir -p "$temp_root_dir/backup"
+pv -tpreb -i 2 $live_root_dir/${live_dir}/${squash_image} | dd of="$temp_root_dir/backup/${squash_image}"
+rm -f $live_root_dir/${live_dir}/${squash_image}
+rm -f $live_root_dir/${live_dir}/osmin.img
 echo "Done"
 
 
 echo "Copying new img as $live_root_dir/${live_dir}/${squash_image}"
-pv -tpreb -i 2 "$temp_root_dir/${squash_image}" | dd of=$live_root_dir/${live_dir}/${squash_image} &&
-rm -rf "$temp_root_dir/${squash_image}" &&
-rm -rf "$temp_root_dir/osmin.img" &&
-rm -rf "$temp_root_dir/fsimg" &&
+pv -tpreb -i 2 "$temp_root_dir/${squash_image}" | dd of=$live_root_dir/${live_dir}/${squash_image}
+rm -rf "$temp_root_dir/${squash_image}"
+rm -rf "$temp_root_dir/osmin.img"
+rm -rf "$temp_root_dir/fsimg"
 echo "Done"
 
 
