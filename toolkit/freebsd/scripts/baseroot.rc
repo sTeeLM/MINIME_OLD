@@ -1,0 +1,77 @@
+#!/bin/sh
+set -x
+PATH=/rescue
+
+. ./iso.rc
+
+BASEROOT_MP=/baseroot
+RWROOT_MP=/rwroot
+LIVEROOT_MP=/liveroot
+BASEROOT_IMG=/Boot/iso/${BSD_ISO}
+
+# Re-mount root R/W, so that we can create necessary sub-directories
+mount -u -w /
+
+
+mkdir -p ${BASEROOT_MP}
+mkdir -p ${RWROOT_MP}
+mkdir -p ${LIVEROOT_MP}
+
+# Find MINIME media
+
+if [ -c "/dev/iso9660/MINIME" ];
+then
+    echo "find MINIME media at /dev/iso9660/MINIME"
+    mount_cd9660 /dev/iso9660/MINIME ${LIVEROOT_MP}
+else
+  if [ -c "/dev/msdosfs/MINIME" ];
+  then
+    echo "find MINIME media at /dev/msdosfs/MINIME"
+    mount_msdosfs /dev/msdosfs/MINIME ${LIVEROOT_MP}
+  fi
+fi
+
+if [ ! -f "${LIVEROOT_MP}/${BASEROOT_IMG}" ];
+then
+    echo "can not find BSD ISO /Boot/iso/${BSD_ISO}, quit!"
+    exit 1
+fi
+
+# Mount BSD ISO
+mount_cd9660 /dev/`mdconfig -a -t vnode -f ${LIVEROOT_MP}/${BASEROOT_IMG}` ${BASEROOT_MP}
+err=$?
+case ${err} in
+0)
+	;;
+*)
+	echo "can not mount ${LIVEROOT_MP}/${BASEROOT_IMG}, quit!"
+	exit 1
+	;;
+esac
+
+# Create in-memory filesystem
+mdmfs -s 64m md ${RWROOT_MP}
+# Union-mount it over live root to make it appear as R/W
+mount -t unionfs ${RWROOT_MP} ${BASEROOT_MP}
+
+# Clean /etc/fstab
+echo > ${BASEROOT_MP}/etc/fstab
+
+# Repalce /etc/rc.conf
+cp /scripts/rc.conf ${BASEROOT_MP}/etc/rc.conf
+
+# Copy build tools
+cp -r /scripts ${BASEROOT_MP}
+
+# Mount devfs in live root
+DEV_MP=${BASEROOT_MP}/dev
+mkdir -p ${DEV_MP}
+mount -t devfs devfs ${DEV_MP}
+
+# Make whole liveroot content available in live root via nullfs
+mkdir -p ${BASEROOT_MP}${LIVEROOT_MP}
+mount -t nullfs -o ro ${LIVEROOT_MP} ${BASEROOT_MP}${LIVEROOT_MP}
+
+kenv init_shell="/bin/sh"
+echo "baseroot setup done"
+exit 0
