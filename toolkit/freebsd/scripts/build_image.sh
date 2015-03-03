@@ -121,3 +121,7 @@ umount ${ISO_DIR}
 mdconfig -d -u `echo ${ISO_DEV} | cut -c 3-`
 
 rm -rf ${WORK_PATH}
+
+cat ${BOOT_IMG} | gzip -9 > ${BOOT_IMG}.imz
+
+rm ${BOOT_IMG}

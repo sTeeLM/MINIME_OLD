@@ -63,6 +63,9 @@ cp /scripts/rc.conf ${BASEROOT_MP}/etc/rc.conf
 # Copy build tools
 cp -r /scripts ${BASEROOT_MP}
 
+# Patch bsdinstall
+cp /scripts/bsdinstall_mount /${BASEROOT_MP}/usr/libexec/bsdinstall/mount 
+
 # Mount devfs in live root
 DEV_MP=${BASEROOT_MP}/dev
 mkdir -p ${DEV_MP}
