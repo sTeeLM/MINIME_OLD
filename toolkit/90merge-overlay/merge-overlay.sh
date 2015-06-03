@@ -141,8 +141,8 @@ clearRootImage()
 #!/bin/sh
 mount -t proc proc /proc
 /sbin/load_policy -i
-yum clean all
-yum clean all
+dnf clean all
+dnf clean all
 rpm --rebuilddb
 rpm --rebuilddb
 rm -rf /.liveimg-configured

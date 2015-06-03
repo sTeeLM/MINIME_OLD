@@ -1,6 +1,4 @@
 #!/bin/sh
-# -*- mode: shell-script; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
-# ex: ts=8 sw=4 sts=4 et filetype=sh
 # live images are specified with
 # root=live:backingdev
 
@@ -34,6 +32,14 @@ case "$liveroot" in
         root="${root#live:}"
         root="live:/dev/disk/by-uuid/${root#UUID=}"
         rootok=1 ;;
+    live:PARTUUID=*|PARTUUID=*) \
+        root="${root#live:}"
+        root="live:/dev/disk/by-partuuid/${root#PARTUUID=}"
+        rootok=1 ;;
+    live:PARTLABEL=*|PARTLABEL=*) \
+        root="${root#live:}"
+        root="live:/dev/disk/by-partlabel/${root#PARTLABEL=}"
+        rootok=1 ;;
     live:/*.[Ii][Ss][Oo]|/*.[Ii][Ss][Oo])
         root="${root#live:}"
         root="liveiso:${root}"
@@ -48,4 +54,4 @@ info "root was $liveroot, is now $root"
 # make sure that init doesn't complain
 [ -z "$root" ] && root="live"
 
-wait_for_dev /dev/mapper/live-rw
+wait_for_dev -n /dev/mapper/live-rw

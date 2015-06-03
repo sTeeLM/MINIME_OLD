@@ -1,24 +1,26 @@
 #!/bin/bash
-# -*- mode: shell-script; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
-# ex: ts=8 sw=4 sts=4 et filetype=sh
 
+# called by dracut
 check() {
     # a live host-only image doesn't really make a lot of sense
     [[ $hostonly ]] && return 1
     return 255
 }
 
+# called by dracut
 depends() {
     # if dmsetup is not installed, then we cannot support fedora/red hat
     # style live images
-    echo dm rootfs-block
+    echo dm rootfs-block img-lib
     return 0
 }
 
+# called by dracut
 installkernel() {
     instmods squashfs loop iso9660
 }
 
+# called by dracut
 install() {
     inst_multiple umount dmsetup blkid dd losetup grep blockdev e2label md5sum
     inst_multiple -o checkisomd5
