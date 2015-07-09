@@ -1,0 +1,340 @@
+#!/bin/bash
+#
+# live: Init script for live image
+#
+# chkconfig: 345 00 99
+# description: Init script for live image.
+### BEGIN INIT INFO
+# X-Start-Before: display-manager
+# Required-Start: $local_fs
+### END INIT INFO
+
+. /etc/init.d/functions
+
+if ! strstr "`cat /proc/cmdline`" rd.live.image; then
+    exit 0
+fi
+
+if [ -e /run/.liveimg-configured ] ; then
+    configdone=1
+fi
+
+exists() {
+    which $1 >/dev/null 2>&1 || return
+    $*
+}
+
+touch /run/.liveimg-configured
+
+# Make sure we don't mangle the hardware clock on shutdown
+ln -sf /dev/null /etc/systemd/system/hwclock-save.service
+
+livedir="LiveOS"
+for arg in `cat /proc/cmdline` ; do
+  if [ "${arg##rd.live.dir=}" != "${arg}" ]; then
+    livedir=${arg##rd.live.dir=}
+    return
+  fi
+  if [ "${arg##live_dir=}" != "${arg}" ]; then
+    livedir=${arg##live_dir=}
+    return
+  fi
+done
+
+# enable swaps unless requested otherwise
+swaps=`blkid -t TYPE=swap -o device`
+if ! strstr "`cat /proc/cmdline`" noswap && [ -n "$swaps" ] ; then
+  for s in $swaps ; do
+    my_ply_client show-message "Enabling swap partition $s" 
+    swapon $s
+  done
+fi
+if ! strstr "`cat /proc/cmdline`" noswap && [ -f /run/initramfs/live/${livedir}/swap.img ] ; then
+  my_ply_client show-message "Enabling swap file" 
+  swapon /run/initramfs/live/${livedir}/swap.img
+fi
+
+askPassword() {
+    local _prompt=$1
+    local _pass
+    while [ true ]; do
+       _pass=$(my_ply_client password "$_prompt")
+       if [ -n "$_pass" ]; then
+            echo -n $_pass
+            break
+       elif my_ply_client ping ; then
+            my_ply_client show-message "Please give me password"
+       else
+            break
+       fi
+    done
+}
+
+askYesNo() {
+    local _prompt=$1
+    local _ans
+    while [ true ]; do
+       _ans=$(my_ply_client question "$_prompt")
+       if [ -n "$_ans" ]; then
+           if [ "$_ans" != 'yes' -a "$_ans" != 'no' ]; then
+               my_ply_client show-message "Please answer yes/no"
+           else
+               echo -n $_ans
+               break
+           fi
+       elif my_ply_client ping ; then
+            my_ply_client show-message "Please give me some answer"
+       else
+            break
+       fi
+    done
+}
+
+askSize() {
+    local _prompt=$1
+    local _min=$2
+    local _max=$3
+    local _ans
+    while [ true ]; do
+       _ans=$(my_ply_client question "$_prompt")
+       if [ -n "$_ans" ] ; then
+           if ! `echo -n "$_ans" | grep -q '[^0-9]'` ; then
+               if [ "$_ans" -ge $_min -a "$_ans" -le $_max ]; then
+                   echo -n $_ans
+                   break
+               else
+                   my_ply_client show-message "Size $_ans too small or too large"
+               fi
+           else
+               my_ply_client show-message "Invalid input $_ans"
+           fi
+       elif my_ply_client ping ; then
+           my_ply_client show-message "Please give me some input"
+       else
+           break
+       fi
+    done
+}
+
+mountPersistentHome() {
+  local _pass
+  # support label/uuid
+  if [ "${homedev##LABEL=}" != "${homedev}" -o "${homedev##UUID=}" != "${homedev}" ]; then
+    homedev=`/sbin/blkid -o device -t "$homedev"`
+  fi
+
+  # if we're given a file rather than a blockdev, loopback it
+  if [ "${homedev##mtd}" != "${homedev}" ]; then
+    # mtd devs don't have a block device but get magic-mounted with -t jffs2
+    mountopts="-t jffs2"
+  elif [ ! -b "$homedev" ]; then
+    loopdev=`losetup -f`
+    if [ "${homedev##/run/initramfs/live}" != "${homedev}" ]; then
+      my_ply_client show-message "Remounting live store r/w" 
+      mount -o remount,rw /run/initramfs/live
+    fi
+    losetup $loopdev $homedev
+    homedev=$loopdev
+  fi
+
+  # if it's encrypted, we need to unlock it
+  if [ "$(/sbin/blkid -s TYPE -o value $homedev 2>/dev/null)" = "crypto_LUKS" ]; then
+    echo
+    echo "Setting up encrypted /home device"
+    _pass=$(askPassword 'give me home password')
+    echo -n $_pass | cryptsetup luksOpen $homedev EncHome
+    homedev=/dev/mapper/EncHome
+  fi
+
+  # and finally do the mount
+  mount $mountopts $homedev /home
+  # if we have /home under what's passed for persistent home, then
+  # we should make that the real /home.  useful for mtd device on olpc
+  if [ -d /home/home ]; then mount --bind /home/home /home ; fi
+  [ -x /sbin/restorecon ] && /sbin/restorecon /home
+  if [ -d /home/liveuser ]; then USERADDARGS="-M" ; fi
+}
+
+findPersistentHome() {
+  for arg in `cat /proc/cmdline` ; do
+    if [ "${arg##persistenthome=}" != "${arg}" ]; then
+      homedev=${arg##persistenthome=}
+      return
+    fi
+  done
+}
+
+makePersistentHomeImage() {
+   local _size , _pass
+   _size=$1
+   _pass=$2
+   my_ply_client show-message "Making home image, please be patient..." 
+   mount -o rw,remount /run/initramfs/live
+   dd if=/dev/zero of=/run/initramfs/live/${livedir}/home.img bs=4096 count=$(($_size *1024*1024/4096))
+   echo -n $_pass | cryptsetup -v -y -c aes-cbc-plain --force-password luksFormat /run/initramfs/live/${livedir}/home.img
+   echo -n $_pass | cryptsetup luksOpen /run/initramfs/live/${livedir}/home.img EncHome
+   mkfs.ext4 /dev/mapper/EncHome
+   cryptsetup luksClose EncHome
+   mount -o ro,remount /run/initramfs/live
+   my_ply_client show-message "Home image Ready!!"
+}
+
+makePersistentHome() {
+   local _yesno
+   local _pass
+   local _size
+   _yesno=$(askYesNo 'Save home?[yes/no]')
+   if [ -n "$_yesno" -a "$_yesno" = 'yes' ]; then
+        _size=$(askSize 'Home size in MB(10-1000)?' 10 1000)
+        _pass=$(askPassword 'Password of home?')
+        if [ -n "$_pass" -a -n "$_size" ] ; then
+            makePersistentHomeImage "$_size" "$_pass"
+        fi
+   fi
+   if [ -e /run/initramfs/live/${livedir}/home.img ]; then
+     homedev=/run/initramfs/live/${livedir}/home.img
+   fi
+}
+
+if strstr "`cat /proc/cmdline`" persistenthome= ; then
+  findPersistentHome
+elif [ -e /run/initramfs/live/${livedir}/home.img ]; then
+  homedev=/run/initramfs/live/${livedir}/home.img
+elif ! strstr "`cat /proc/cmdline`" nopersistenthome ; then
+  my_ply_client show-message "Initialize persistent /home " 
+  makePersistentHome
+fi
+
+# if we have a persistent /home, then we want to go ahead and mount it
+if ! strstr "`cat /proc/cmdline`" nopersistenthome && [ -n "$homedev" ] ; then
+  my_ply_client show-message "Mounting persistent /home" 
+  mountPersistentHome
+fi
+
+# make it so that we don't do writing to the overlay for things which
+# are just tmpdirs/caches
+# mount -t tmpfs -o mode=0755 varcacheyum /var/cache/yum
+mount -t tmpfs vartmp /var/tmp
+[ -x /sbin/restorecon ] && /sbin/restorecon /var/cache/yum /var/tmp >/dev/null 2>&1
+
+if [ -n "$configdone" ]; then
+  exit 0
+fi
+
+# don't enable the gnome-settings-daemon packagekit plugin
+gsettings set org.gnome.settings-daemon.plugins.updates active 'false' || :
+
+# add fedora user with no passwd
+my_ply_client show-message "Adding live user" 
+useradd $USERADDARGS -c "Live System User" liveuser
+passwd -d liveuser > /dev/null || :
+usermod -aG wheel liveuser > /dev/null || :
+
+# Remove root password lock
+# passwd -d root > /dev/null
+
+# don't use prelink on a running live image
+sed -i 's/PRELINKING=yes/PRELINKING=no/' /etc/sysconfig/prelink &>/dev/null || :
+
+# turn off mdmonitor by default
+systemctl --no-reload disable mdmonitor.service 2> /dev/null || :
+systemctl --no-reload disable mdmonitor-takeover.service 2> /dev/null || :
+systemctl stop mdmonitor.service 2> /dev/null || :
+systemctl stop mdmonitor-takeover.service 2> /dev/null || :
+
+# don't enable the gnome-settings-daemon packagekit plugin
+gsettings set org.gnome.settings-daemon.plugins.updates active 'false' || :
+
+# don't start cron/at as they tend to spawn things which are
+# disk intensive that are painful on a live image
+systemctl --no-reload disable crond.service 2> /dev/null || :
+systemctl --no-reload disable atd.service 2> /dev/null || :
+systemctl stop crond.service 2> /dev/null || :
+systemctl stop atd.service 2> /dev/null || :
+
+# and hack so that we eject the cd on shutdown if we're using a CD...
+if strstr "`cat /proc/cmdline`" CDLABEL= ; then
+  cat >> /sbin/halt.local << FOE
+#!/bin/bash
+# XXX: This often gets stuck during shutdown because /etc/init.d/halt
+#      (or something else still running) wants to read files from the block#      device that was ejected.  Disable for now.  Bug #531924
+# we want to eject the cd on halt, but let's also try to avoid
+# io errors due to not being able to get files...
+#cat /sbin/halt > /dev/null
+#cat /sbin/reboot > /dev/null
+#/usr/sbin/eject -p -m $(readlink -f /run/initramfs/livedev) >/dev/null 2>&1
+#echo "Please remove the CD from your drive and press Enter to finish restarting"
+#read -t 30 < /dev/console
+FOE
+chmod +x /sbin/halt.local
+fi
+
+# add static hostname to work around xauth bug
+# https://bugzilla.redhat.com/show_bug.cgi?id=679486
+echo "localhost" > /etc/hostname || :
+
+
+if [ -e /usr/share/icons/hicolor/96x96/apps/fedora-logo-icon.png ] ; then
+    # use image also for kdm
+    mkdir -p /usr/share/apps/kdm/faces
+    cp /usr/share/icons/hicolor/96x96/apps/fedora-logo-icon.png /usr/share/apps/kdm/faces/fedora.face.icon
+fi
+
+
+findDesktop() {
+  for arg in `cat /proc/cmdline` ; do
+    if [ "${arg##livedesktop=}" != "${arg}" ]; then
+      livedesktop=${arg##livedesktop=}
+      return
+    fi
+  done
+}
+
+if strstr "`cat /proc/cmdline`" livedesktop= ; then
+  findDesktop
+fi
+
+if [ -z "$livedesktop" ]; then
+  livedesktop=gnome
+fi
+
+if [ "$livedesktop" == "kde" ]; then
+  cat > /var/lib/AccountsService/users/liveuser<<EOF
+[User]
+Language=zh_CN.utf8
+XSession=kde-plasma
+SystemAccount=false
+EOF
+elif [ "$livedesktop" == "gnome" ]; then
+  cat > /var/lib/AccountsService/users/liveuser<<EOF
+[User]
+Language=zh_CN.utf8
+XSession=gnome
+SystemAccount=false
+EOF
+else
+  cat > /var/lib/AccountsService/users/liveuser<<EOF
+[User]
+Language=zh_CN.utf8
+XSession=cde
+SystemAccount=false
+EOF
+fi
+
+cat > /etc/gdm/custom.conf <<EOF
+# GDM configuration storage
+[daemon]
+AutomaticLoginEnable=True
+AutomaticLogin=liveuser
+[security]
+[xdmcp]
+[greeter]
+[chooser]
+[debug]
+EOF
+
+# make sure to set the right permissions and selinux contexts
+mkdir -p /home/liveuser || :
+chown -R liveuser:liveuser /home/liveuser/ || :
+restorecon -R /home/liveuser/ || :
+exit 0
