@@ -263,7 +263,7 @@ clearRootImage $temp_root_dir/fsimg/LiveOS/ext3fs.img &&
 echo "Done"
 
 echo "Making new squash fs as $temp_root_dir/${squash_image}"
-mksquashfs "$temp_root_dir/fsimg/" "$temp_root_dir/${squash_image}" -b 524288 -comp xz -Xbcj x86 &&
+mksquashfs "$temp_root_dir/fsimg/" "$temp_root_dir/${squash_image}" -b 1M -comp xz -Xbcj x86 -Xdict-size '75%' &&
 echo "Done"
 
 if [ ! -f "$temp_root_dir/${squash_image}" ]; then
