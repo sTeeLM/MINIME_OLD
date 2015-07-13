@@ -276,7 +276,7 @@ if [ "$livedesktop" == "kde" ]; then
   cat > /var/lib/AccountsService/users/liveuser<<EOF
 [User]
 Language=zh_CN.utf8
-XSession=kde
+XSession=plasma
 SystemAccount=false
 EOF
 elif [ "$livedesktop" == "gnome" ]; then
