@@ -176,6 +176,12 @@ chmod ug+rwx /var/lib/gdm
 chmod o-rwx /var/lib/gdm
 restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
+echo '# edit by merger overlay' > /etc/fstab
+echo '/dev/root  /         ext4    defaults,noatime 0 0' >> /etc/fstab
+echo 'devpts     /dev/pts  devpts  gid=5,mode=620   0 0' >> /etc/fstab
+echo 'tmpfs      /dev/shm  tmpfs   defaults         0 0' >> /etc/fstab
+echo 'proc       /proc     proc    defaults         0 0' >> /etc/fstab
+echo 'sysfs      /sys      sysfs   defaults         0 0' >> /etc/fstab
 . /etc/minime_version
 MINIME_MINOR=\$((\$MINIME_MINOR + 1))
 if [ \$MINIME_MINOR -ge 100 ]; then

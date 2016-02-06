@@ -252,7 +252,7 @@ systemctl stop atd.service 2> /dev/null || :
 
 # add static hostname to work around xauth bug
 # https://bugzilla.redhat.com/show_bug.cgi?id=679486
-echo "localhost" > /etc/hostname || :
+echo "MINIME" > /etc/hostname || :
 
 
 findDesktop() {
