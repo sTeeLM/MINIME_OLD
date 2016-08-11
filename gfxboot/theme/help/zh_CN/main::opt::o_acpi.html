@@ -1,0 +1,18 @@
+<h3>
+<a name="o_acpi">内核选项: acpi</a>
+</h3>
+
+<p>
+ACPI (Advanced Configuration and Power Interface) 定义了内核和BIOS之间的标准电源和配置管理接口。默认情况下，如果BIOS新于2000年，<em>acpi</em>是打开状态，有一些通用的内核启动选项用来控制ACPI:
+switched on when a BIOS is detected that is newer than from year
+<ul>
+  <li><em>pci=noacpi</em> -- do not use ACPI to route PCI interrupts</li>
+  <li><em>acpi=oldboot</em> -- only the parts of ACPI that are relevant for booting remain activated</li>
+  <li><em>acpi=off</em> -- switch off ACPI completely</li>
+  <li><em>acpi=force</em> -- switch on ACPI even if your BIOS is dated before 2000</li>
+</ul>
+</p>
+
+<p>
+在新系统上，ACPI已经替换了老<a href="#o_apm">apm</a>系统.
+</p>

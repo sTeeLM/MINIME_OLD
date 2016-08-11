@@ -1,0 +1,40 @@
+label_kde
+MINIME系统(KDE界面)
+label_gnome
+MINIME系统(GNOME界面)
+label_nohome
+MINIME系统(忽略Home.img)
+label_overlay
+MINIME系统(使用Overlay)
+label_ram
+MINIME系统(全内存模式)
+label_kali
+KALI Linux 渗透测试工具
+label_kali_forensic
+KALI Linux 渗透测试工具 (安全模式)
+label_nuke_manual
+硬盘毁灭工具(手动模式)
+label_nuke_auto
+硬盘毁灭工具(自动模式)
+label_dos
+启动 MINIME DOS 工具盘
+label_bsd_x86
+启动FreeBSD LiveCD(x86)
+label_bsd_x64
+启动FreeBSD LiveCD(x64)
+label_pe_x86
+Windows PE 工具盘(x86)
+label_pe_x64
+Windows PE 工具盘(x64)
+label_atih
+Acronis ATIH2014 启动盘
+label_plpbt
+Plop 启动管理器
+label_grub4dos
+启动 Grub4DOS 工具
+label_hdt
+启动硬件检测工具
+label_memtest
+启动内存检测工具
+label_harddisk
+启动本地硬盘
