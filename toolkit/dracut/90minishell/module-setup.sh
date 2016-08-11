@@ -24,4 +24,5 @@ install() {
     mkdir -p "${initdir}/etc/init.d"
     inst_script "$moddir/rcS.sh" "/etc/init.d/rcS"
     inst_simple "$moddir/inittab" "/etc/inittab"
+    inst_simple "$moddir/profile.minishell" "/etc/profile.minishell"
 }
