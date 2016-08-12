@@ -57,11 +57,11 @@
 # this yourself...
 #
 # Start an "askfirst" shell on the console (whatever that may be)
-::askfirst:-/bin/bash
+::respawn:-/bin/bash
 # Start an "askfirst" shell on /dev/tty2-4
-tty2::askfirst:-/bin/bash
-tty3::askfirst:-/bin/bash
-tty4::askfirst:-/bin/bash
+#tty2::askfirst:-/bin/bash
+#tty3::askfirst:-/bin/bash
+#tty4::askfirst:-/bin/bash
 
 # /sbin/getty invocations for selected ttys
 #tty4::respawn:/sbin/getty 38400 tty5

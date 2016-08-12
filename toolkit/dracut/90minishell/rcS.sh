@@ -8,3 +8,5 @@ echo "3 1 4 3" > /proc/sys/kernel/printk
 clear
 hostname MINIME
 mv /etc/profile.minishell /etc/profile
+cat /etc/minime.splash
+
