@@ -20,7 +20,7 @@ installkernel() {
 
 install() {
     local _i _progs _path _busybox
-    inst_multiple hostname which clear swapon swapoff udevadm dwipe
+    inst_multiple hostname which clear swapon swapoff udevadm dwipe mkfs.ext3 mkfs.ext4 mksquashfs e2label
     inst_hook pre-mount 09 "$moddir/minishell.sh"
     mkdir -p "${initdir}/etc/init.d"
     inst_script "$moddir/rcS.sh" "/etc/init.d/rcS"
@@ -40,7 +40,9 @@ install() {
     # (using busybox-1.15.1-7.fc14.i686 at the time of writing)
 
     for _i in $_progs; do
-        inst_simple $_i
+        _path=$(find_binary "$_i")
+        [ -z "$_path" ] && continue
+        inst_multiple $_i
     done
 
     # do not use sh of busybox!
