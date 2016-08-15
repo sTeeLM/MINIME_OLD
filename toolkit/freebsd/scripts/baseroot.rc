@@ -1,6 +1,6 @@
 #!/bin/sh
 set -x
-PATH=/rescue
+export PATH=/rescue:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 . ./iso.rc
 
@@ -19,16 +19,15 @@ mkdir -p ${LIVEROOT_MP}
 
 # Find MINIME media
 
-if [ -c "/dev/iso9660/MINIME" ];
-then
+if [ -c "/dev/iso9660/MINIME" ]; then
     echo "find MINIME media at /dev/iso9660/MINIME"
     mount_cd9660 /dev/iso9660/MINIME ${LIVEROOT_MP}
-else
-  if [ -c "/dev/msdosfs/MINIME" ];
-  then
+elif [ -c "/dev/msdosfs/MINIME" ]; then
     echo "find MINIME media at /dev/msdosfs/MINIME"
     mount_msdosfs /dev/msdosfs/MINIME ${LIVEROOT_MP}
-  fi
+elif [ -c "/dev/ntfs/MINIME" ]; then
+    echo "find MINIME media at /dev/ntfs/MINIME"
+    ntfs-3g /dev/ntfs/MINIME ${LIVEROOT_MP}
 fi
 
 if [ ! -f "${LIVEROOT_MP}/${BASEROOT_IMG}" ];

@@ -68,16 +68,15 @@ cat ${WORK_PATH}/iso/usr/freebsd-dist/kernel.txz | xz -d | tar -C ${IMAGE_DIR} \
    --include=boot/kernel/cd9660.ko \
    --include=boot/kernel/msdosfs.ko \
    --include=boot/kernel/nullfs.ko \
+   --include=boot/kernel/fuse.ko \
    --include=boot/kernel/kernel \
    -xvf - 
 
 cat ${WORK_PATH}/iso/usr/freebsd-dist/base.txz | xz -d | tar -C ${IMAGE_DIR} \
    --include=boot \
-   -xvf - 
-
+   -xvf -
 # copy /boot/loader.conf
 cp ${ROOT_DIR}/scripts/loader.conf ${IMAGE_DIR}/boot
-
 
 # create ROOTFS
 ROOTFS_IMG=${IMAGE_DIR}/data/rootfs.img
@@ -101,6 +100,10 @@ mount /dev/${ROOTFS_DEV}a ${ROOTFS_DIR}
 cat ${WORK_PATH}/iso/usr/freebsd-dist/base.txz | xz -d | tar -C ${ROOTFS_DIR} \
    --include=rescue \
    -xvf - 
+
+# add ntfs tools
+cat ${ROOT_DIR}/ntfs3g.`uname -m`.txz | xz -d | tar -C ${ROOTFS_DIR} -xvf - 
+
 
 # copy baseroot.rc
 cp ${ROOT_DIR}/scripts/baseroot.rc ${ROOTFS_DIR}
