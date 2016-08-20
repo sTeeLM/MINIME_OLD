@@ -7,7 +7,7 @@ export PATH=/rescue:/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 BASEROOT_MP=/baseroot
 RWROOT_MP=/rwroot
 LIVEROOT_MP=/liveroot
-BASEROOT_IMG=/Boot/iso/${BSD_ISO}
+BASEROOT_IMG=/boot/iso/${BSD_ISO}
 
 # Re-mount root R/W, so that we can create necessary sub-directories
 mount -u -w /
@@ -32,7 +32,7 @@ fi
 
 if [ ! -f "${LIVEROOT_MP}/${BASEROOT_IMG}" ];
 then
-    echo "can not find BSD ISO /Boot/iso/${BSD_ISO}, quit!"
+    echo "can not find BSD ISO /boot/iso/${BSD_ISO}, quit!"
     exit 1
 fi
 
