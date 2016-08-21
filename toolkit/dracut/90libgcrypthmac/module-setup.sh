@@ -19,5 +19,10 @@ installkernel() {
 }
 
 install() {
-    inst_multiple /lib64/libgcrypt.so.20
+    if [ -f /lib64/libgcrypt.so.20 ]; then
+        inst_multiple /lib64/libgcrypt.so.20
+    fi
+    if [ -f /lib/libgcrypt.so.20 ]; then
+        inst_multiple /lib/libgcrypt.so.20
+    fi 
 }
