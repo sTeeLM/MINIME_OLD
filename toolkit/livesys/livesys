@@ -29,11 +29,8 @@ livedir="LiveOS"
 for arg in `cat /proc/cmdline` ; do
   if [ "${arg##rd.live.dir=}" != "${arg}" ]; then
     livedir=${arg##rd.live.dir=}
-    return
-  fi
-  if [ "${arg##live_dir=}" != "${arg}" ]; then
+  elif [ "${arg##live_dir=}" != "${arg}" ]; then
     livedir=${arg##live_dir=}
-    return
   fi
 done
 
@@ -269,31 +266,13 @@ if strstr "`cat /proc/cmdline`" livedesktop= ; then
 fi
 
 if [ -z "$livedesktop" ]; then
-  livedesktop=gnome
+  livedesktop=kde
 fi
 
-if [ "$livedesktop" == "kde" ]; then
-  cat > /var/lib/AccountsService/users/liveuser<<EOF
-[User]
-Language=zh_CN.utf8
-XSession=plasma
-SystemAccount=false
-EOF
-elif [ "$livedesktop" == "gnome" ]; then
-  cat > /var/lib/AccountsService/users/liveuser<<EOF
-[User]
-Language=zh_CN.utf8
-XSession=gnome
-SystemAccount=false
-EOF
-else
-  cat > /var/lib/AccountsService/users/liveuser<<EOF
-[User]
-Language=zh_CN.utf8
-XSession=cde
-SystemAccount=false
-EOF
-fi
+echo '[User]' > /var/lib/AccountsService/users/liveuser
+echo 'Language=zh_CN.utf8' >> /var/lib/AccountsService/users/liveuser
+echo "XSession=$livedesktop" >> /var/lib/AccountsService/users/liveuser
+echo 'SystemAccount=false' >>  /var/lib/AccountsService/users/liveuser
 
 cat > /etc/gdm/custom.conf <<EOF
 # GDM configuration storage
