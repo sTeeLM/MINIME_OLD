@@ -1,0 +1,235 @@
+# This is an example plymouth plugin script
+
+Window.SetBackgroundTopColor(0.234, 0.43, 0.705);
+Window.SetBackgroundBottomColor(0.16, 0.25, 0.44);
+back_ground.original_image = Image("background.png");
+back_ground.image = back_ground.original_image.Scale(Window.GetWidth(), Window.GetHeight());
+back_ground.sprite = Sprite(back_ground.image);
+
+build_version.image=Image.Text(BuildVersion, 0.92, 0.64, 0.09, 1, "Courier,Regular 10");
+build_version.sprite=Sprite(build_version.image);
+
+
+fun refresh_callback ()
+  {
+        back_ground.sprite.SetX (0);
+        back_ground.sprite.SetY (0);
+	back_ground.sprite.SetZ (-1);
+        back_ground.sprite.SetOpacity (1);
+	
+	build_version.image=Image.Text(BuildVersion, 0.92, 0.64, 0.09, 1, "Courier,Regular 10");
+	build_version.sprite=Sprite(build_version.image);
+
+	build_version.sprite.SetPosition(10, 10, 10);
+        build_version.sprite.SetOpacity(1);
+  }
+  
+Plymouth.SetRefreshFunction (refresh_callback);
+
+#----------------------------------------- Dialogue --------------------------------
+
+status = "normal";
+
+fun dialog_setup()
+  {
+    local.box;
+    local.lock;
+    local.entry;
+    local.prompt;
+    local.content;
+    
+    box.image = Image("box.png");
+    lock.image = Image("lock.png");
+    entry.image = Image("entry.png");
+    prompt.image  = Image.Text("", 1, 1, 1, 1, "Courier,Regular 10");
+    content.image = Image.Text("", 0, 0, 0, 1, "Courier,Regular 10");
+    
+    box.sprite = Sprite(box.image);
+    box.x = Window.GetX() + Window.GetWidth()  / 2 - box.image.GetWidth ()/2;
+    box.y = Window.GetY() + Window.GetHeight() / 2 - box.image.GetHeight()/2;
+    box.z = 10000;
+    box.sprite.SetPosition(box.x, box.y, box.z);
+    
+    lock.sprite = Sprite(lock.image);
+    lock.x = box.x + box.image.GetWidth()/2 - (lock.image.GetWidth() + entry.image.GetWidth()) / 2;
+    lock.y = box.y + box.image.GetHeight()/2 - lock.image.GetHeight()/2;
+    lock.z = box.z + 1;
+    lock.sprite.SetPosition(lock.x, lock.y, lock.z);
+    
+    entry.sprite = Sprite(entry.image);
+    entry.x = lock.x + lock.image.GetWidth();
+    entry.y = box.y + box.image.GetHeight()/2 - entry.image.GetHeight()/2;
+    entry.z = box.z + 1;
+    entry.sprite.SetPosition(entry.x, entry.y, entry.z);
+
+    prompt.sprite = Sprite(prompt.image);
+    prompt.sprite.x = box.x;
+    prompt.sprite.y = box.y;
+    prompt.sprite.z = box.z + 1;
+    prompt.sprite.SetPosition(prompt.x, prompt.y, prompt.z);
+
+    content.sprite = Sprite(content.image);
+    content.sprite.x = entry.x;
+    content.sprite.y = entry.y;
+    content.sprite.z = entry.z + 1;
+    content.sprite.SetPosition(entry.x, entry.y, entry.z);
+    
+    global.dialog.box = box;
+    global.dialog.lock = lock;
+    global.dialog.entry = entry;
+    global.dialog.bullet_image = Image("bullet.png");
+    global.dialog.prompt = prompt;
+    global.dialog.content = content;
+    dialog_opacity (1);
+  }
+fun dialog_reset()
+  {
+    dialog.content.image  = NULL;
+    dialog.content.sprite = NULL;
+    dialog.bullet = NULL;
+  }
+fun dialog_opacity(opacity)
+  {
+    dialog.box.sprite.SetOpacity (opacity);
+    dialog.lock.sprite.SetOpacity (opacity);
+    dialog.entry.sprite.SetOpacity (opacity);
+    for (index = 0; dialog.bullet[index]; index++)
+      {
+        dialog.bullet[index].sprite.SetOpacity(opacity);
+      }
+    dialog.prompt.sprite.SetOpacity(opacity);
+    dialog.content.sprite.SetOpacity(opacity);
+  }
+
+fun display_normal_callback ()
+  {
+    global.status = "normal";
+    if (global.dialog)
+      dialog_opacity (0);
+  }
+
+fun display_password_callback (prompt, bullets)
+  {
+    global.status = "password";
+    if (!global.dialog)
+	dialog_setup();
+    else
+	dialog_opacity(1);
+
+    dialog_reset();
+    dialog.prompt.image  = Image.Text(prompt, 1, 1, 1, 1, "Courier,Regular 10");
+    dialog.prompt.sprite = Sprite(dialog.prompt.image);
+    dialog.prompt.sprite.SetPosition(dialog.box.x + dialog.box.image.GetWidth()/2 - dialog.prompt.image.GetWidth()/2, 
+	dialog.box.y - dialog.prompt.image.GetHeight(), dialog.box.z + 2);
+    dialog.prompt.sprite.SetOpacity(1);
+    if(bullets <= 25 ) {
+	    for (index = 0; dialog.bullet[index] || index < bullets; index++)
+	      {
+		if (!dialog.bullet[index])
+		  {
+		    dialog.bullet[index].sprite = Sprite(dialog.bullet_image);
+		    dialog.bullet[index].x = dialog.entry.x + index * dialog.bullet_image.GetWidth() + 10;
+		    dialog.bullet[index].y = dialog.entry.y + dialog.entry.image.GetHeight() / 2 - dialog.bullet_image.GetHeight() / 2;
+		    dialog.bullet[index].z = dialog.entry.z + 1;
+		    dialog.bullet[index].sprite.SetPosition(dialog.bullet[index].x, dialog.bullet[index].y, dialog.bullet[index].z);
+		  }
+		if (index < bullets)
+		  dialog.bullet[index].sprite.SetOpacity(1);
+		else
+		  dialog.bullet[index].sprite.SetOpacity(0);
+	      }
+      }
+  }
+
+fun display_question_callback (prompt, text)
+  {
+    global.status = "question";
+    if (!global.dialog)
+	dialog_setup();
+    else
+	dialog_opacity(1);
+
+    dialog_reset();
+    dialog.prompt.image  = Image.Text(prompt, 1, 1, 1, 1, "Courier,Regular 10");
+    dialog.prompt.sprite = Sprite(dialog.prompt.image);
+    dialog.prompt.sprite.SetPosition(dialog.box.x + dialog.box.image.GetWidth()/2 - dialog.prompt.image.GetWidth()/2, 
+	dialog.box.y - dialog.prompt.image.GetHeight(), dialog.box.z + 2);
+    dialog.prompt.sprite.SetOpacity(1);
+
+    dialog.content.image  = Image.Text(text, 0, 0, 0, 1, "Courier,Regular 10");
+    dialog.content.sprite = Sprite(dialog.content.image);
+    dialog.content.sprite.x = dialog.entry.x;
+    dialog.content.sprite.y = dialog.entry.y;
+    dialog.content.sprite.z = dialog.entry.z + 1;
+    dialog.content.sprite.SetPosition(dialog.content.sprite.x, dialog.content.sprite.y, dialog.content.sprite.z);
+    dialog.content.sprite.SetOpacity(1);
+  }
+
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+Plymouth.SetDisplayQuestionFunction(display_question_callback);
+#----------------------------------------- Progress Bar --------------------------------
+
+progress_box.original_image = Image("progress_box.png");
+progress_box.image = progress_box.original_image.Scale(Window.GetWidth(), 20);
+progress_box.sprite = Sprite(progress_box.image);
+
+progress_box.x = 0;
+progress_box.y = Window.GetHeight() - progress_box.image.GetHeight();
+progress_box.sprite.SetPosition(progress_box.x, progress_box.y, 0);
+
+progress_bar.original_image = Image("progress_bar.png");
+progress_bar.image = progress_bar.original_image.Scale(Window.GetWidth(), 20);
+progress_bar.sprite = Sprite();
+
+progress_bar.x = 0;
+progress_bar.y = Window.GetHeight() - progress_bar.image.GetHeight();
+progress_bar.sprite.SetPosition(progress_bar.x, progress_bar.y, 1);
+
+fun progress_callback (duration, progress)
+  {
+    if (progress_bar.show_image.GetWidth () != Math.Int (progress_box.image.GetWidth () * progress))
+      {
+        progress_bar.show_image = progress_bar.image.Scale(progress_bar.image.GetWidth(progress_bar.image) * progress, progress_bar.image.GetHeight());
+        progress_bar.sprite.SetImage (progress_bar.show_image);
+      }
+  }
+
+Plymouth.SetBootProgressFunction(progress_callback);
+
+#----------------------------------------- Quit --------------------------------
+
+fun quit_callback ()
+{
+  back_ground.sprite.SetOpacity (0);
+}
+
+Plymouth.SetQuitFunction(quit_callback);
+
+#----------------------------------------- Message --------------------------------
+
+
+message.image = Image.Text("", 0, 0, 0, 1, "Courier,Regular 10");
+message.sprite=Sprite(message.image);
+message.sprite_y = Window.GetHeight() - 20;
+message.sprite_x = Window.GetWidth() / 2;
+
+
+
+fun display_message_callback (text)
+{
+  message.image = Image.Text(text, 0, 0, 0, 1, "Courier,Regular 10");
+  message.sprite=Sprite(message.image);
+  message.sprite.SetPosition(message.sprite_x - message.image.GetWidth() / 2, message.sprite_y , 10);
+  #message.sprite.SetPosition(0, 0 , 10);
+}
+
+fun hide_message_callback (text)
+{
+  message.image  = NULL;
+  message.sprite = NULL;
+}
+
+Plymouth.SetDisplayMessageFunction (display_message_callback);
+Plymouth.SetHideMessageFunction (hide_message_callback);
+Plymouth.SetBootMessageFunction (display_message_callback);

@@ -1,0 +1,11 @@
+[Plymouth Theme]
+Name=Minime
+Description=minime theme.
+ModuleName=scriptx
+
+[script]
+ImageDir=/usr/share/plymouth/themes/minime
+ScriptFile=/usr/share/plymouth/themes/minime/minime.script
+
+[script-env-vars]
+BuildVersion=MINIME 4.3 build at 2016-09-11 13:09:34

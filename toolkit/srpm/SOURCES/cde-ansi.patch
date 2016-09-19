@@ -1,0 +1,12 @@
+--- minime-4.0/cde-2.2.4/config/cf/linux.cf	2016-06-20 02:46:29.000000000 +0800
++++ minime-4.0.new/cde-2.2.4/config/cf/linux.cf	2016-09-09 22:39:04.266879562 +0800
+@@ -111,8 +111,8 @@
+ #define NeedWidePrototypes	NO
+ #define SetTtyGroup		YES
+ 
+-#define CcCmd			gcc -g -pipe
+-#define CplusplusCmd		g++ -g -pipe -fpermissive
++#define CcCmd			gcc -g -pipe -ansi
++#define CplusplusCmd		g++ -g -pipe -fpermissive -ansi
+ #define AsCmd			as
+ #define LdCmd			ld

@@ -1,0 +1,16 @@
+packages="
+cde-2.2.4
+cde-zh_CN-1.0.0
+dwipe-2.1.1
+livesys-1.0.0
+skels-1.0.0
+fonts-1.0.0
+master-boot-code-1.22.0
+gfxboot-4.5.6
+misc-tools-1.0.0
+wallpapers-1.0.0
+gfxboot-themes-1.0.0
+dracut-patch-1.0.0
+grub2-themes-1.0.0
+plymouth-themes-0.8.9"
+

@@ -1,0 +1,243 @@
+--- minime-4.0/cde-2.2.4/config/cf/site.def	2016-06-20 02:46:29.000000000 +0800
++++ minime-4.0.new/cde-2.2.4/config/cf/site.def	2016-09-10 16:13:22.958630004 +0800
+@@ -133,7 +133,7 @@
+ #endif
+ 
+ #if defined(LinuxArchitecture)
+-# define DtLocalesToBuild de_DE.ISO8859-1 es_ES.ISO8859-1 fr_FR.ISO8859-1 it_IT.ISO8859-1 en_US.UTF-8 
++# define DtLocalesToBuild zh_CN.UTF-8 de_DE.ISO8859-1 es_ES.ISO8859-1 fr_FR.ISO8859-1 it_IT.ISO8859-1 en_US.UTF-8 
+ # define UTF8_NLS_SUPPORT
+ #endif
+ 
+--- minime-4.0/cde-2.2.4/programs/localized/templates/Chinese.tmpl	2016-09-10 17:02:41.893492769 +0800
++++ minime-4.0.new/cde-2.2.4/programs/localized/templates/Chinese.tmpl	2016-09-10 17:04:34.535442354 +0800
+@@ -4,7 +4,7 @@
+  * variable for the Chinese locale.
+  */
+ 
+-SOURCE_LANG=zh_CN.dt-eucCN
++SOURCE_LANG=zh_CN.UTF-8
+ 
+ #ifdef AlphaArchitecture
+ LANG=zh_CN
+@@ -30,3 +30,7 @@
+ #ifdef UXPArchitecture
+ LANG=zh_CN
+ #endif
++
++#ifdef LinuxArchitecture
++LANG=zh_CN.UTF-8
++#endif
+--- minime-4.0/cde-2.2.4/admin/IntegTools/dbTools/installCDE.src	2016-09-10 18:30:14.028011980 +0800
++++ minime-4.0.new/cde-2.2.4/admin/IntegTools/dbTools/installCDE.src	2016-09-10 18:33:08.892545286 +0800
+@@ -924,7 +924,10 @@
+                                         CDE-HELP-FR \
+                                         CDE-IT \
+                                         CDE-MSG-IT \
+-                                        CDE-HELP-IT "
++                                        CDE-HELP-IT \
++                                        CDE-CN \
++                                        CDE-MSG-CN \
++                                        CDE-HELP-CN "
+       fi
+     fi
+   fi
+--- minime-4.0/cde-2.2.4/databases/CDE-HELP-LOC.src	2016-09-10 17:46:06.535704123 +0800
++++ minime-4.0.new/cde-2.2.4/databases/CDE-HELP-LOC.src	2016-09-10 17:56:47.496293033 +0800
+@@ -2856,6 +2856,20 @@
+ 	install_target = /usr/dt/appconfig/help/%_ALT_LANG_%/graphics/warnicon.pm
+ }
+ 
++XCOMM #########################################################################
++XCOMM
++XCOMM  Linux - Locale and platform specific entries
++XCOMM
++XCOMM #########################################################################
++#ifdef linux
++#ifdef _CHINESE_
++/usr/dt/appconfig/help/zh_CN.UTF-8
++{ linux
++        install_target = /usr/dt/appconfig/help/zh_CN.UTF-8
++        type = sym_link
++}
++#endif
++#endif
+ 
+ XCOMM #########################################################################
+ XCOMM 
+--- minime-4.0/cde-2.2.4/databases/CDE-LOC.src	2016-09-10 17:46:06.536711123 +0800
++++ minime-4.0.new/cde-2.2.4/databases/CDE-LOC.src	2016-09-10 18:01:46.004702916 +0800
+@@ -1352,6 +1352,50 @@
+ #endif /* __hpux */
+ 
+ XCOMM ##########################################################################
++XCOMM
++XCOMM  Linux - Locale and platform specific entries
++XCOMM
++XCOMM ##########################################################################
++#ifdef linux
++#ifdef _CHINESE_
++./zh_CN.UTF-8
++{ linux
++        install_target = /usr/dt/app-defaults/zh_CN
++        type = sym_link
++}
++./zh_CN.dt-eucCN
++{ linux
++        install_target = /usr/dt/appconfig/appmanager/zh_CN
++        type = sym_link
++}
++./zh_CN.dt-eucCN
++{ linux
++        install_target = /usr/dt/appconfig/types/zh_CN
++        type = sym_link
++}
++./zh_CN.dt-eucCN
++{ linux
++        install_target = /usr/dt/config/zh_CN
++        type = sym_link
++}
++./desc.zh_CN.UTF-8
++{ linux
++        install_target = /usr/dt/share/palettes/desc.zh_CN
++        type = sym_link
++}
++./desc.zh_CN.UTF-8
++{ linux
++        install_target = /usr/dt/share/backdrops/desc.zh_CN
++        type = sym_link
++}
++./zh_CN.UTF-8
++{ linux
++        install_target = /usr/dt/share/examples/types/zh_CN
++        type = sym_link
++}
++#endif
++#endif
++XCOMM ##########################################################################
+ XCOMM 
+ XCOMM  IBM - Locale and platform specific entries
+ XCOMM 
+--- minime-4.0/cde-2.2.4/databases/CDE-MSG-LOC.src	2016-09-10 17:46:06.536711123 +0800
++++ minime-4.0.new/cde-2.2.4/databases/CDE-MSG-LOC.src	2016-09-10 18:04:17.515679577 +0800
+@@ -403,6 +403,21 @@
+ #endif
+ #endif
+ 
++
++XCOMM ##########################################################################
++XCOMM
++XCOMM  Linux - Locale and platform specific entries
++XCOMM
++XCOMM ##########################################################################
++#ifdef linux
++#ifdef _CHINESE_
++/usr/dt/lib/nls/msg/zh_CN.UTF-8
++{ hpux
++        install_target = /usr/dt/lib/nls/msg/zh_CN.UTF-8
++        type = sym_link
++}
++#endif
++#endif
+ XCOMM ##########################################################################
+ XCOMM 
+ XCOMM  HP - Locale and platform specific entries
+--- minime-4.0/cde-2.2.4/databases/Imakefile	2016-09-10 17:46:06.536711123 +0800
++++ minime-4.0.new/cde-2.2.4/databases/Imakefile	2016-09-10 18:21:52.969100956 +0800
+@@ -133,24 +133,28 @@
+ 	CDE-FR.udb \
+ 	CDE-IT.udb \
+ 	CDE-JP.udb \
++	CDE-CN.udb \
+ 	CDE-HELP-C.udb \
+ 	CDE-HELP-DE.udb \
+ 	CDE-HELP-ES.udb \
+ 	CDE-HELP-FR.udb \
+ 	CDE-HELP-IT.udb \
+ 	CDE-HELP-JP.udb \
++	CDE-HELP-CN.udb \
+ 	CDE-INFOLIB-C.udb \
+ 	CDE-INFOLIB-DE.udb \
+ 	CDE-INFOLIB-ES.udb \
+ 	CDE-INFOLIB-FR.udb \
+ 	CDE-INFOLIB-IT.udb \
+ 	CDE-INFOLIB-JP.udb \
++	CDE-INFOLIB-CN.udb \
+ 	CDE-MSG-C.udb \
+ 	CDE-MSG-DE.udb \
+ 	CDE-MSG-ES.udb \
+ 	CDE-MSG-FR.udb \
+ 	CDE-MSG-IT.udb \
+-	CDE-MSG-JP.udb
++	CDE-MSG-JP.udb \
++	CDE-MSG-CN.udb
+ 
+ DBS = \
+ 	CDE-DEMOS.db \
+@@ -173,24 +177,28 @@
+ 	CDE-FR.db \
+ 	CDE-IT.db \
+ 	CDE-JP.db \
++	CDE-CN.db \
+ 	CDE-HELP-C.db \
+ 	CDE-HELP-DE.db \
+ 	CDE-HELP-ES.db \
+ 	CDE-HELP-FR.db \
+ 	CDE-HELP-IT.db \
+ 	CDE-HELP-JP.db \
++	CDE-HELP-CN.db \
+ 	CDE-INFOLIB-C.db \
+ 	CDE-INFOLIB-DE.db \
+ 	CDE-INFOLIB-ES.db \
+ 	CDE-INFOLIB-FR.db \
+ 	CDE-INFOLIB-IT.db \
+ 	CDE-INFOLIB-JP.db \
++	CDE-INFOLIB-CN.db \
+ 	CDE-MSG-C.db \
+ 	CDE-MSG-DE.db \
+ 	CDE-MSG-ES.db \
+ 	CDE-MSG-FR.db \
+ 	CDE-MSG-IT.db \
+-	CDE-MSG-JP.db
++	CDE-MSG-JP.db \
++	CDE-MSG-CN.db
+ 
+ clean::
+ 	$(RM) *.db
+@@ -262,6 +270,19 @@
+ CppSourceFile(CDE-INFOLIB-LOC-JP.tmp,CDE-INFOLIB-LOC.src,$(JP_LOC_CPP_LIST) $(MOTIF_DOC),)
+ CreateLocalizedFilesets(JP,ja_JP.dt-eucJP,Japanese EUC,CDE-LANGS,CDE-JPN-E-HELP,CDE-JPN-E-MSG,ja_JP.dt-eucJP,ja_JP.dt-eucJP,CDE-LOC-JP.tmp,CDE-HELP-LOC-JP.tmp,CDE-MSG-LOC-JP.tmp,CDE-INFOLIB-LOC-JP.tmp)
+ 
++/*
++ * Chinese
++ */
++CN_LOC_CPP_LIST = $(UDB_CPP_UNDEF_LIST) -D_CHINESE_
++CppSourceFile(CDE-LOC-CN.tmp,CDE-LOC.src,$(CN_LOC_CPP_LIST),)
++CppSourceFile(CDE-HELP-LOC-CN.tmp,CDE-HELP-LOC.src,$(CN_LOC_CPP_LIST),)
++CppSourceFile(CDE-MSG-LOC-CN.tmp,CDE-MSG-LOC.src,$(CN_LOC_CPP_LIST),)
++CppSourceFile(CDE-INFOLIB-LOC-CN.tmp,CDE-INFOLIB-LOC.src,$(CN_LOC_CPP_LIST) $(MOTIF_DOC),)
++CreateLocalizedFilesets(CN,zh_CN.UTF-8,Chinese UTF8,CDE-LANGS,CDE-CN-E-HELP,CDE-CN-E-MSG,zh_CN.UTF-8,zh_CN.UTF-8,CDE-LOC-CN.tmp,CDE-HELP-LOC-CN.tmp,CDE-MSG-LOC-CN.tmp,CDE-INFOLIB-LOC-CN.tmp)
++
++
++
++
+ $(DBS):: $(UDBS)
+ 
+ includes:: $(DBS)
+--- minime-4.0/cde-2.2.4/databases/CDE-FONTS.udb	2016-09-11 21:31:48.306749533 +0800
++++ minime-4.0.new/cde-2.2.4/databases/CDE-FONTS.udb	2016-09-11 21:32:54.814835640 +0800
+@@ -216,6 +216,14 @@
+ # for Linux
+ #
+ #ifdef UTF8_NLS_SUPPORT
++programs/fontaliases/linux/zh_CN.UTF-8/fonts.alias
++{ linux
++        install_target = /usr/dt/config/xfonts/zh_CN.UTF-8/fonts.alias
++}
++programs/fontaliases/linux/zh_CN.UTF-8/fonts.dir
++{ linux
++        install_target = /usr/dt/config/xfonts/zh_CN.UTF-8/fonts.dir
++}
+ programs/fontaliases/linux/en_US.UTF-8/fonts.alias
+ { linux
+ 	install_target = /usr/dt/config/xfonts/en_US.UTF-8/fonts.alias

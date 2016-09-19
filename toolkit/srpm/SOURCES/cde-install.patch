@@ -1,0 +1,11 @@
+--- minime-4.0/cde-2.2.4/admin/IntegTools/dbTools/installCDE.src	2016-08-28 10:31:36.000000000 +0800
++++ minime-4.0.new/cde-2.2.4/admin/IntegTools/dbTools/installCDE.src	2016-09-09 11:16:06.095199131 +0800
+@@ -45,7 +45,7 @@
+ #define HASH #
+ #define STAR *
+ 
+-LOGFILE="installCDE.$$.log"
++LOGFILE="/tmp/installCDE.$$.log"
+ 
+ REVISION="$(echo "$Revision: /main/20 $" | awk '{print $2}')"
+ 

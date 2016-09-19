@@ -1,0 +1,231 @@
+2014-10-02:	HEAD
+	- work around memory corruption issue seen on hyper-v (bnc #876640)
+
+2014-09-17:	4.5.5
+	- fix compiler warning
+	- recreated font to match latest translations
+	- translation update 2
+	- translation update
+	- remove duplicate 'Default' from po file
+
+2014-08-25:	4.5.4
+	- added two more texts to pot file
+
+2014-08-25:	4.5.3
+	- adjust network dialog to latest linuxrc
+	- make 'Upgrade" translatable
+
+2014-01-24:	4.5.2
+	- fix compiler warning
+	- hrvoje.senjan: use FT_SYNTHESIS_H macro
+	- set min video mode to 1024x576
+
+2012-10-01:	4.5.1
+	- start using 'default' video entry
+
+2012-03-28:	4.5.0
+	- ddc test record
+	- rework monitor detection
+	- new video selection menu
+
+2011-10-13:	4.4.7
+	- fix isohybrid detection
+
+2011-10-13:	4.4.6
+	- don't set init boot option (bnc #723678)
+
+2011-09-02:	4.4.5
+	- make systemd default
+
+2011-09-02:	4.4.4
+	- add config option for default init program
+	- use isolinux-config from package
+
+2011-07-07:	4.4.3
+	- added KDE theme
+	- update upstream theme
+
+2011-07-07:	4.4.2
+	- added menu to select init variant (bnc #704417)
+	- fix script in case we are on no branch
+
+2011-04-18:	4.4.1
+	- restore compat with syslinux 3
+	- fix wrong mem access
+	- pass back working dir as absolute path
+	- pass cwd via sysconfig
+
+2011-04-07:	4.4.0
+	- set version to oS 11.5
+	- rewrite chdir to work without bootloader chdir support
+
+2011-02-24:	4.3.8
+	- default to hd install with isohybrid boot from hd
+
+2011-02-21:	4.3.7
+	- new oS 11.4 branding
+
+2011-01-13:	4.3.6
+	- update virtual box support
+	- fix autoselection of emulator for "gfxboot -p" (bnc #661832)
+	- add qemu-kvm to the list auf autoselected emulators (bnc #661832)
+
+2010-10-27:	4.3.5
+	- avoid dialogs wider than screen
+
+2010-10-04:	4.3.4
+	- remove VERSION
+	- create VERSION and changelog from git repo
+
+2010-10-04:	4.3.3
+	- updated help text translations (bnc #551046)
+
+2010-10-04:	4.3.2
+	- updated translations (bnc #551046)
+
+2010-09-03:	4.3.1
+	- new tag
+	- show real product name on serial console (bnc #634299)
+
+2010-08-05:	4.3.0
+	- add 'lang' option if language has been changed [used to be: if != en_US] (bnc #619983)
+	- keyboard label was not translatable (bnc #610638)
+
+2010-07-05:	4.2.3
+	- updated translations (bnc #619513)
+
+2010-06-25:	4.2.2
+	- updated translations
+
+2010-05-31:	4.2.1
+	- clear font flags when setting an undefined font (bnc #609755)
+
+2010-05-20:	4.2.0
+	- don't abuse bit 31 in font pointer (bnc #599478)
+	- turn on ints explicitly
+	- better memory dump
+
+2010-05-19:	4.1.47
+	- openSUSE 11.3 theme
+
+2010-04-30:	4.1.46
+	- new version
+	- set valid tss for pm calls
+	- fixed examples to work with latest gfxboot.c32
+	- added Asturian (bnc #562202)
+	- strip gfxboot.com related parts from syslinux-3.86 patchset
+
+2010-04-16:	4.1.44
+	- fix help text formatting
+
+2010-04-16:	4.1.43
+	- reset progress bar status after error
+
+2010-04-09:	4.1.42
+	- add patches for syslinux 3.86
+	- prefer gfxboot.c32 over gfxboot.com
+
+2009-12-10:	4.1.41
+	- center main menu (bnc #562089)
+	- leave more room for timeout indicator (bnc #551718)
+
+2009-11-16:	4.1.40
+	- syslinux patch: fix chdir() return value
+
+2009-10-30:	4.1.39
+	- updated help text translations
+	- updated translations (bnc #551046)
+
+2009-10-29:	4.1.38
+	- add gfxboot.c32 patch
+	- extend interface so it works with gfxboot.c32
+	- menu layout can be in high memory
+	-added --no-unpack option
+
+2009-10-19:	4.1.37
+	- fix progress indicator for PXE boot
+	- fix syslinux setup
+	- get kernel size right
+
+2009-10-19:	4.1.36
+	- set correct timeout value
+	- localboot should return to text mode
+	- set correct timeout value
+	- more examples
+	- more examples
+
+2009-10-15:	4.1.35
+	- install examples
+	- added some sample themes
+	- improved gfxtest script
+
+2009-10-15:	4.1.34
+	- added patches for syslinux 3.83
+	- support pxe setup in test script
+
+2009-10-12:	4.1.33
+	- updated speech samples
+
+2009-10-12:	4.1.32
+	- added swiss french keymap
+
+2009-10-07:	4.1.31
+	- the new maps
+	- new keyboard mappings, new font
+	- make keytable handling more consistent
+	- updated keyboard mapping list
+	- added syslinux-3.82 patchset
+
+2009-10-02:	4.1.30
+	- fix pot
+
+2009-09-30:	4.1.29
+	- livecd: add F4=kerneloptions
+	- cleaned up po files
+	- more flexible translation support
+	- new font
+	- log more data to allow easier font size adjustments
+
+2009-09-29:	4.1.28
+	- set default install type correctly (bnc #542781)
+
+2009-09-28:	4.1.27
+	- updated language list
+	- fixed grub picture (bnc #542113)
+	- make new network dialog translatable
+
+2009-09-24:	4.1.26
+	- escape weird chars in URLs
+
+2009-09-18:	4.1.25
+	- F-key assignments configurable via gfxboot.cfg
+	- fixed evil bug
+	- removed old config copies
+	- unified config file
+	- added memcheck option
+
+2009-09-15:	4.1.24
+	- added proxy setup (bnc #329668)
+
+2009-09-14:	4.1.23
+	- updated 11.2 openSUSE theme (bnc #538949)
+	- added network config dialog
+	- up version number
+	- fix some nasm warnings
+
+2009-09-09:	4.1.22
+	- gfxboot script works with new syslinux
+	- fixed bug number
+	- no fb after F9 for live cd (bnc #391313)
+	- use new 'mount' instruction
+	- improved gfxtest script; removed old test script
+	- added --version option to gfxboot
+	- allow empty menus
+	- rm temp files
+	- removed obsolete themes
+	- added new gfxtest script
+	- support qemu-kvm
+	- Ilyas Bakirov: added Kirghiz support
+	- implemented realloc function
+	- file read works with files of unknown size (-1)
+
