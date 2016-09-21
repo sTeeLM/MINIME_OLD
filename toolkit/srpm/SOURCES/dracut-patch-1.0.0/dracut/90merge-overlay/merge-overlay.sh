@@ -143,12 +143,20 @@ mount -t proc proc /proc
 /sbin/load_policy -i
 if [ ! -c /dev/urandom ]; then
     mknod /dev/urandom c 1 9
+    URANDOM=TRUE
 fi
 if [ ! -c /dev/random ]; then
     mknod /dev/random c 1 8
+    RANDOM=TRUE
 fi
 dnf clean all
 dnf clean all
+if [ "$URANDOM" = "TRUE" ]; then
+    rm /dev/urandom
+fi
+if [ "$RANDOM" = "TRUE" ]; then
+    rm /dev/random
+fi
 rpm --rebuilddb
 rpm --rebuilddb
 rm -rf /.liveimg-configured
