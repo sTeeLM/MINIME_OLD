@@ -8,4 +8,4 @@ ImageDir=/usr/share/plymouth/themes/minime
 ScriptFile=/usr/share/plymouth/themes/minime/minime.script
 
 [script-env-vars]
-BuildVersion=MINIME 4.3 build at 2016-09-11 13:09:34
+BuildVersion=/var/run/initramfs/live/boot/Version

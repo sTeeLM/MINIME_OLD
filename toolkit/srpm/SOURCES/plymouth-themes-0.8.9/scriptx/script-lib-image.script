@@ -19,6 +19,11 @@ Image.Text = fun (text, red, green, blue, alpha, font, align)
   return Image.Adopt (Image._Text (text, red, green, blue, alpha, font, align));
 };
 
+Image.TextFromFile = fun (text, red, green, blue, alpha, font, align)
+{
+  return Image.Adopt (Image._TextFromFile (text, red, green, blue, alpha, font, align));
+};
+
 Image |= fun (filename)
 {
   return Image.Adopt (Image._New(filename));

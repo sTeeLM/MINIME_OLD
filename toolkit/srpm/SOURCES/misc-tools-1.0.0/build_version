@@ -1,0 +1,3 @@
+#!/bin/sh 
+echo "MINIME $1 build at $(date +'%Y-%m-%d %H:%m:%S')"
+

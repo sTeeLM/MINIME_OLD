@@ -37,6 +37,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 
 #include "script-lib-image.script.h"
 
@@ -152,6 +156,135 @@ static script_return_t image_scale (script_state_t *state,
     }
   return script_return_obj_null ();
 }
+
+static char * ply_read_from_file(const char * file_path)
+{
+  struct stat st;
+  FILE * f = NULL;
+  char * buffer = NULL;
+  int success = 0;  
+ 
+  if(lstat(file_path, &st) != 0) {
+    ply_error("py_read_from_file: %s lstat error", file_path);
+    goto error;
+  }
+
+  if((f = fopen(file_path, "r")) == NULL) {
+    ply_error("py_read_from_file: %s fopen error", file_path);
+    goto error;
+  }
+
+  if((buffer = malloc(st.st_size + 1)) == NULL) {
+    ply_error("py_read_from_file: %s malloc %d error", file_path, st.st_size + 1);
+    goto error;
+  }
+
+  if(fread(buffer, st.st_size, 1, f) != 1) {
+    ply_error("py_read_from_file: %s fread error", file_path);
+    goto error;
+  }
+
+  buffer[st.st_size] = 0;
+
+  success = 1;
+
+error:
+  if(NULL != f) {
+    fclose(f);
+    f = NULL;
+  }
+  if(NULL != buffer && success != 1) {
+    free(buffer);
+    buffer = NULL;
+  }
+  return buffer;
+}
+
+static script_return_t image_text_from_file (script_state_t *state,
+                                   void           *user_data)
+{
+  script_lib_image_data_t *data = user_data;
+  ply_pixel_buffer_t *image;
+  ply_label_t *label;
+  char * text = NULL;
+  script_obj_t *alpha_obj, *font_obj, *align_obj;
+  int width, height;
+  int align = PLY_LABEL_ALIGN_LEFT;
+  char *font;
+  
+  char *file_path = script_obj_hash_get_string (state->local, "text");
+  
+  float alpha;
+  float red = CLAMP(script_obj_hash_get_number (state->local, "red"), 0, 1);
+  float green = CLAMP(script_obj_hash_get_number (state->local, "green"), 0, 1);
+  float blue = CLAMP(script_obj_hash_get_number (state->local, "blue"), 0, 1);
+
+  alpha_obj = script_obj_hash_peek_element (state->local, "alpha");
+
+  if (script_obj_is_number (alpha_obj))
+    {
+      alpha = CLAMP(script_obj_as_number (alpha_obj), 0, 1);
+    }
+  else
+    alpha = 1;
+  script_obj_unref(alpha_obj);
+
+  font_obj = script_obj_hash_peek_element (state->local, "font");
+
+  if (script_obj_is_string (font_obj))
+    font = script_obj_as_string (font_obj);
+  else
+    font = NULL;
+
+  script_obj_unref(font_obj);
+
+  align_obj = script_obj_hash_peek_element(state->local, "align");
+
+  if (script_obj_is_string(align_obj)) {
+    char *align_str = script_obj_as_string(align_obj);
+
+    if(!strcmp("left", align_str))
+      align = PLY_LABEL_ALIGN_LEFT;
+    else if(!strcmp("center", align_str))
+      align = PLY_LABEL_ALIGN_CENTER;
+    else if(!strcmp("right", align_str))
+      align = PLY_LABEL_ALIGN_RIGHT;
+    else
+      ply_error("Unrecognized Image.TextFromFile alignment string '%s'. "
+	      "Expecting 'left', 'center', or 'right'\n",
+		align_str);
+    free(align_str);
+  }
+  script_obj_unref(align_obj);
+
+  if (!file_path) return script_return_obj_null ();
+
+  text = ply_read_from_file(file_path);
+
+  label = ply_label_new ();
+  ply_label_set_text (label, text == NULL ? "failed" : text);
+  if (font)
+    ply_label_set_font (label, font);
+  ply_label_set_alignment(label, align);
+  ply_label_set_color (label, red, green, blue, alpha);
+  ply_label_show (label, NULL, 0, 0);
+  
+  width = ply_label_get_width (label);
+  height = ply_label_get_height (label);
+  
+  image = ply_pixel_buffer_new (width, height);
+  ply_label_draw_area (label, image, 0, 0, width, height);
+  
+  free (file_path);
+  free (font);
+  if(NULL != text) {
+    free(text);
+  }
+  ply_label_free (label);
+  
+  return script_return_obj (script_obj_new_native (image, data->class));
+}
+
 
 static script_return_t image_text (script_state_t *state,
                                    void           *user_data)
@@ -283,6 +416,20 @@ script_lib_image_data_t *script_lib_image_setup (script_state_t *state,
                               "font",
                               "align",
                               NULL);
+
+  script_add_native_function (image_hash,
+                              "_TextFromFile",
+                              image_text_from_file,
+                              data,
+                              "text",
+                              "red",
+                              "green",
+                              "blue",
+                              "alpha",
+                              "font",
+                              "align",
+                              NULL);
+
 
   script_obj_unref (image_hash);
   data->script_main_op = script_parse_string (script_lib_image_string, "script-lib-image.script");

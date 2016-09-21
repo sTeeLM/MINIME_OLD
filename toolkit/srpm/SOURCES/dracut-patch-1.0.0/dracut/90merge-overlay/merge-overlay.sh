@@ -141,6 +141,12 @@ clearRootImage()
 #!/bin/sh
 mount -t proc proc /proc
 /sbin/load_policy -i
+if [ ! -c /dev/urandom ]; then
+    mknod /dev/urandom c 1 9
+fi
+if [ ! -c /dev/random ]; then
+    mknod /dev/random c 1 8
+fi
 dnf clean all
 dnf clean all
 rpm --rebuilddb
@@ -182,19 +188,8 @@ echo 'devpts     /dev/pts  devpts  gid=5,mode=620   0 0' >> /etc/fstab
 echo 'tmpfs      /dev/shm  tmpfs   defaults         0 0' >> /etc/fstab
 echo 'proc       /proc     proc    defaults         0 0' >> /etc/fstab
 echo 'sysfs      /sys      sysfs   defaults         0 0' >> /etc/fstab
-. /etc/minime_version
-MINIME_MINOR=\$((\$MINIME_MINOR + 1))
-if [ \$MINIME_MINOR -ge 100 ]; then
-    MINIME_MINOR=0
-    MINIME_MAJOR=\$((\$MINIME_MAJOR + 1))
-fi
-BuildVersion="MINIME \$MINIME_MAJOR.\$MINIME_MINOR build at \$(date +'%Y-%m-%d %H:%m:%S')"
-echo \$BuildVersion > /etc/motd
 sed -i 's/AutomaticLoginEnable=True/AutomaticLoginEnable=False/' /etc/gdm/custom.conf
 sed -i 's/AutomaticLogin=liveuser//' /etc/gdm/custom.conf
-sed -i "s/BuildVersion=.*/BuildVersion=\$BuildVersion/" /usr/share/plymouth/themes/minime/minime.plymouth
-echo MINIME_MAJOR=\$MINIME_MAJOR > /etc/minime_version
-echo MINIME_MINOR=\$MINIME_MINOR >> /etc/minime_version
 rm -rf /var/lib/AccountsService/users/liveuser
 /sbin/restorecon -v /etc/passwd /etc/passwd-
 /sbin/restorecon -v /etc/group /etc/group-

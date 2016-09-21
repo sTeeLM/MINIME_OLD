@@ -6,9 +6,10 @@ back_ground.original_image = Image("background.png");
 back_ground.image = back_ground.original_image.Scale(Window.GetWidth(), Window.GetHeight());
 back_ground.sprite = Sprite(back_ground.image);
 
-build_version.image=Image.Text(BuildVersion, 0.92, 0.64, 0.09, 1, "Courier,Regular 10");
+build_version.image=Image.Text("Loading Version Info...", 0.92, 0.64, 0.09, 1, "Courier,Regular 10");
 build_version.sprite=Sprite(build_version.image);
 
+root_mounted = 0;
 
 fun refresh_callback ()
   {
@@ -16,8 +17,11 @@ fun refresh_callback ()
         back_ground.sprite.SetY (0);
 	back_ground.sprite.SetZ (-1);
         back_ground.sprite.SetOpacity (1);
-	
-	build_version.image=Image.Text(BuildVersion, 0.92, 0.64, 0.09, 1, "Courier,Regular 10");
+	if(global.root_mounted) { 
+		build_version.image=Image.TextFromFile(BuildVersion, 0.92, 0.64, 0.09, 1, "Courier,Regular 10");
+	} else {
+		build_version.image=Image.Text("Loading Version Info...", 0.92, 0.64, 0.09, 1, "Courier,Regular 10");	
+	}
 	build_version.sprite=Sprite(build_version.image);
 
 	build_version.sprite.SetPosition(10, 10, 10);
@@ -230,6 +234,12 @@ fun hide_message_callback (text)
   message.sprite = NULL;
 }
 
+fun root_mounted_callback () 
+{
+  global.root_mounted = 1;
+}
+
 Plymouth.SetDisplayMessageFunction (display_message_callback);
 Plymouth.SetHideMessageFunction (hide_message_callback);
 Plymouth.SetBootMessageFunction (display_message_callback);
+Plymouth.SetRootMountedFunction (root_mounted_callback);

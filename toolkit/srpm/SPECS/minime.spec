@@ -344,6 +344,8 @@ cp -r %{_builddir}/%{name}-%{version}/misc-tools-%{misc_tools_version}/my_ply_cl
 	%{buildroot}%{_bindir}
 cp -r %{_builddir}/%{name}-%{version}/misc-tools-%{misc_tools_version}/i3-im \
         %{buildroot}%{_bindir}
+cp -r %{_builddir}/%{name}-%{version}/misc-tools-%{misc_tools_version}/build_version \
+        %{buildroot}%{_bindir}
 
 %clean
 rm -rf %{buildroot}
@@ -388,11 +390,12 @@ systemctl disable rpcbind.service
 /lib/dracut/modules.d/90libgcrypthmac
 /lib/dracut/modules.d/90dmsquash-live/*
 %{_sysconfdir}/minime.conf
-%{_sysconfdir}/minime_version
 %{_sysconfdir}/minime-minishell.conf
 
 %post dracut-patch
 patch -p0 < /lib/dracut/modules.d/90dmsquash-live/dmsquash-live-root.sh.patch
+mv /etc/motd /etc/motd.BAK
+ln -s /var/run/initramfs/live/boot/Version /etc/motd
 
 ##################################################
 %files fonts
@@ -462,6 +465,7 @@ systemctl enable livesys
 %files misc-tools
 %{_bindir}/my_ply_client
 %{_bindir}/i3-im
+%{_bindir}/build_version
 
 %changelog
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.8.9-17.2013.08.14
