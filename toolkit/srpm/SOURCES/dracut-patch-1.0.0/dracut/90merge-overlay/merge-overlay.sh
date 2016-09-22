@@ -140,23 +140,22 @@ clearRootImage()
             cat >> /mnt/tempfs/clearroot.sh << FOE
 #!/bin/sh
 mount -t proc proc /proc
-/sbin/load_policy -i
+if [ ! -c /dev/zero ]; then
+    mknod /dev/zero c 1 5
+fi
+if [ ! -c /dev/null ]; then
+    mknod /dev/null c 1 3
+fi
+
 if [ ! -c /dev/urandom ]; then
     mknod /dev/urandom c 1 9
-    URANDOM=TRUE
 fi
 if [ ! -c /dev/random ]; then
     mknod /dev/random c 1 8
-    RANDOM=TRUE
 fi
+/sbin/load_policy -i
 dnf clean all
 dnf clean all
-if [ "$URANDOM" = "TRUE" ]; then
-    rm /dev/urandom
-fi
-if [ "$RANDOM" = "TRUE" ]; then
-    rm /dev/random
-fi
 rpm --rebuilddb
 rpm --rebuilddb
 rm -rf /.liveimg-configured
@@ -190,6 +189,7 @@ chmod ug+rwx /var/lib/gdm
 chmod o-rwx /var/lib/gdm
 restorecon -R /var/lib/gdm
 rm -rf /var/log/journal/*
+rm -rf /dev/*
 echo '# edit by merger overlay' > /etc/fstab
 echo '/dev/root  /         ext4    defaults,noatime 0 0' >> /etc/fstab
 echo 'devpts     /dev/pts  devpts  gid=5,mode=620   0 0' >> /etc/fstab
